@@ -7,20 +7,30 @@ import {
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { SwapOffer } from '../../swap-offer/entities/swap-offer.entity';
+import { SkillCategory } from 'src/enums/skill-category.enum';
+import { SkillRequestStatus } from 'src/enums/skill-request-status.enum';
 
 @Entity()
 export class SkillRequest {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  title: string;
+  @Column({
+    type: 'enum',
+    enum: SkillCategory,
+    default: SkillCategory.OTHER,
+  })
+  title: SkillCategory;
 
   @Column()
   description: string;
 
-  @Column({ default: 'pending' })
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: SkillRequestStatus,
+    default: SkillRequestStatus.PENDING,
+  })
+  status: SkillRequestStatus;
 
   @ManyToOne(() => User, (user) => user.requests)
   user: User;

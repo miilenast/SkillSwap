@@ -1,0 +1,16 @@
+export enum SkillCategory {
+  GARDENING = 'Pomoć u bašti',
+  ELECTRICAL_WORK = 'Elektronika',
+  TECH_SUPPORT = 'Pomoć sa računarima',
+  COOKING = 'Kuvanje',
+  CLEANING = 'Čišćenje',
+  DELIVERY = 'Dostava',
+  TUTORING = 'Pomoć pri učenju',
+  WRITING = 'Pisanje',
+  FITNESS = 'Trening',
+  CHILD_CARE = 'Briga o deci',
+  PET_CARE = 'Briga o ljubimcima',
+  PHOTOGRAPHY = 'Fotografija',
+  BEAUTY_SERVICES = 'Usluge lepote',
+  OTHER = 'Ostalo',
+}

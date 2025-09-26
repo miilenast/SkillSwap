@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { SkillOffer } from '../../skill-offer/entities/skill-offer.entity';
 import { SkillRequest } from '../../skill-request/entities/skill-request.entity';
+import { Review } from 'src/review/entities/review.entity';
+import { Message } from 'src/message/entities/message.entity';
 
 @Entity()
 export class User {
@@ -26,6 +29,9 @@ export class User {
   phoneNumber: string;
 
   @Column({ nullable: true })
+  profilePicture: string;
+
+  @Column({ nullable: true })
   address: string;
 
   @Column({ type: 'float', nullable: true })
@@ -39,4 +45,19 @@ export class User {
 
   @OneToMany(() => SkillRequest, (request) => request.user)
   requests: SkillRequest[];
+
+  @OneToMany(() => SkillOffer, (swapOffer) => swapOffer.offerer)
+  madeSwapOffers: SkillOffer[];
+
+  @OneToMany(() => Review, (review) => review.reviewer)
+  givenReviews: Review[];
+
+  @OneToMany(() => Review, (review) => review.reviewedUser)
+  receivedReviews: Review[];
+
+  @OneToMany(() => Message, (message) => message.sender)
+  sentMessages: Message[];
+
+  @OneToMany(() => Message, (message) => message.receiver)
+  receivedMessages: Message[];
 }

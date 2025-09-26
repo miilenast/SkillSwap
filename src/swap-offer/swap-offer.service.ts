@@ -1,30 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SwapOffer } from './entities/swap-offer.entity';
 import { CreateSwapOfferDto } from './dto/create-swap-offer.dto';
 import { UpdateSwapOfferDto } from './dto/update-swap-offer.dto';
+import { SkillOfferService } from 'src/skill-offer/skill-offer.service';
+import { SkillRequestService } from 'src/skill-request/skill-request.service';
+import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class SwapOfferService {
   constructor(
     @InjectRepository(SwapOffer)
     private readonly swapOfferRepository: Repository<SwapOffer>,
+    private skillOfferService: SkillOfferService,
+    private skillRequestService: SkillRequestService,
   ) {}
 
-  create(createSwapOfferDto: CreateSwapOfferDto): Promise<SwapOffer> {
-    const offer = this.swapOfferRepository.create(createSwapOfferDto);
-    return this.swapOfferRepository.save(offer);
+  async create(
+    createSwapOfferDto: CreateSwapOfferDto,
+    user: User,
+  ): Promise<SwapOffer> {
+    const offeredSkill = await this.skillOfferService.findOne(
+      createSwapOfferDto.offeredSkillId,
+    );
+    const requestedSkill = await this.skillRequestService.findOne(
+      createSwapOfferDto.requestedSkillId,
+    );
+
+    const swapOffer = this.swapOfferRepository.create({
+      offerer: user,
+      offeredSkill: offeredSkill,
+      requestedSkill: requestedSkill,
+    });
+    return this.swapOfferRepository.save(swapOffer);
   }
 
-  findAll(): Promise<SwapOffer[]> {
-    return this.swapOfferRepository.find();
+  async findAll(): Promise<SwapOffer[]> {
+    return this.swapOfferRepository.find({
+      relations: ['offerer', 'offeredSkill', 'requestedSkill'],
+    });
   }
 
   async findOne(id: number): Promise<SwapOffer> {
-    const offer = await this.swapOfferRepository.findOneBy({ id });
+    const offer = await this.swapOfferRepository.findOne({
+      where: { id },
+      relations: ['offerer', 'offeredSkill', 'requestedSkill'],
+    });
     if (!offer) {
-      throw new Error(`SwapOffer with id ${id} not found`);
+      throw new NotFoundException(`SwapOffer with id ${id} not found`);
     }
     return offer;
   }
@@ -34,14 +58,20 @@ export class SwapOfferService {
     updateSwapOfferDto: UpdateSwapOfferDto,
   ): Promise<SwapOffer> {
     await this.swapOfferRepository.update(id, updateSwapOfferDto);
-    const offer = await this.swapOfferRepository.findOneBy({ id });
+    const offer = await this.swapOfferRepository.findOne({
+      where: { id },
+      relations: ['offeredSkill', 'requestedSkill', 'offerer'],
+    });
     if (!offer) {
-      throw new Error(`SwapOffer with id ${id} not found`);
+      throw new NotFoundException(`SwapOffer with id ${id} not found`);
     }
     return offer;
   }
 
   async remove(id: number): Promise<void> {
-    await this.swapOfferRepository.delete(id);
+    const result = await this.swapOfferRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`SwapOffer with id ${id} not found`);
+    }
   }
 }
