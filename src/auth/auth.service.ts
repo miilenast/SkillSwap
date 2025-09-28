@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -9,15 +10,17 @@ import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/entities/user.entity';
 import axios from 'axios';
+import { StorageService } from 'src/storage/storage.service';
 
 @Injectable()
 export class AuthService {
   constructor(
+    private storageService: StorageService,
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
 
-  async register(createUserDto: CreateUserDto): Promise<User> {
+  async register(createUserDto: any): Promise<{ id: number }> {
     const existingUsername = await this.userService.findUserByUsername(
       createUserDto.username,
     );
@@ -71,7 +74,7 @@ export class AuthService {
       longitude: longitude ?? 0,
     });
 
-    return user;
+    return { id: user.id };
   }
 
   async validateUser(

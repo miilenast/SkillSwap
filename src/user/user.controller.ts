@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   Controller,
@@ -54,7 +52,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Post(':id/profile-picture')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('profilePicture'))
   uploadProfilePicture(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
@@ -63,6 +61,7 @@ export class UserController {
     if (req.user.id !== +id) {
       throw new Error('You can only upload your own profile picture');
     }
+    console.log('Primljen fajl:', file);
     return this.userService.uploadProfilePicture(+id, file);
   }
 }
