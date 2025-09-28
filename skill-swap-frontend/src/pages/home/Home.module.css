@@ -1,0 +1,41 @@
+.container {
+  text-align: center;
+  margin-top: 50px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.heading {
+  color: #6faef2;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.description {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto 30px;
+  line-height: 1.5;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.button {
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: white;
+  background-color: #54a0f1;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button:hover {
+  background-color: #54a0f1cc;
+}
