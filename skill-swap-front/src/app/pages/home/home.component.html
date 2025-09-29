@@ -1,0 +1,20 @@
+<div class="container">
+  <ng-container *ngIf="isLoggedIn$ | async; else loggedOut">
+    <div class="loggedInContent">
+      <h1 class="heading">Dobrodošao/la nazad!</h1>
+      <p class="text">Spreman/spremna za razmenu veština?</p>
+      <p class="text">Pregedaj ponude za svoje zahteve ili kreiraj novi zahtev.</p>
+      <p class="text">Pretraži veštine koje se traže i ponudi razmenu!</p>
+      </div>
+  </ng-container>
+
+  <ng-template #loggedOut>
+    <div class="loggedOutContent">
+      <h1 class="heading">Dobrodošli u Skill Swap!</h1>
+      <p class="description">
+        Platforma za razmenu veština među komšijama.
+        Pronađi nekoga sa veštinom koja ti je potrebna i ponudi svoju u zamenu.
+      </p>
+    </div>
+  </ng-template>
+</div>

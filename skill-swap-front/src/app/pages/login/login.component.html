@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="authBox">
+    <h1 class="heading">Prijavi se</h1>
+    <form (ngSubmit)="submit()" class="form">
+      <input
+        type="text"
+        name="username"
+        placeholder="Korisničko ime"
+        [(ngModel)]="formData.username"
+        class="input"
+        required
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Šifra"
+        [(ngModel)]="formData.password"
+        class="input"
+        required
+      />
+      <button type="submit" class="button">Prijavi se</button>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="filter-bar">
+  <form class="filterForm">
+    <label>Filter po kategoriji:</label>
+    <select [(ngModel)]="myCategory" name="category" (change)="applyFilter()">
+      <option value="all">Sve</option>
+      <option *ngFor="let cat of myCategory" [value]="cat">{{ cat }}</option>
+    </select>
+  </form>
+</div>
+
+<table border="1" width="100%" style="margin-top: 20px;">
+  <thead>
+    <tr>
+      <th>Korisnik</th>
+      <th>Kategorija</th>
+      <th>Opis</th>
+      <th>Akcija</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let req of filteredRequests">
+      <td>{{ req.user.username }}</td>
+      <td>{{ req.title }}</td>
+      <td>{{ req.description }}</td>
+      <td>
+        <button (click)="openOfferForm(req.id)">Ponudi razmenu</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Modal ili inline forma za ponudu razmene -->
+<div *ngIf="selectedRequestId" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;">
+  <h3>Ponuda razmene za zahtev #{{ selectedRequestId }}</h3>
+  <form class="offerForm" (ngSubmit)="submitOffer()">
+    <label>Izaberi svoju veštinu:</label>
+    <select [(ngModel)]="myCategory" name="skillCategory">
+      <option *ngFor="let cat of myCategory" [value]="cat">{{ cat }}</option>
+    </select>
+    <button type="submit">Sačuvaj</button>
+    <button type="button" (click)="selectedRequestId = null">Otkaži</button>
+  </form>
+</div>

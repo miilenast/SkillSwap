@@ -1,0 +1,55 @@
+<div *ngIf="!user">Učitavanje profila...</div>
+<div *ngIf="user" class="container">
+  <div class="profileHeader">
+    <img [src]="user.profilePicture" class="profileImage" />
+    <h2>{{ '@' + user.username }}</h2>
+  </div>
+  
+  <div class="profileDetails">
+    <div class="detailItem">
+      <span>Ime i prezime:</span>
+      <span>{{ user.firstName }} {{ user.lastName }}</span>
+    </div>
+    <div class="detailItem">
+      <span>Adresa:</span>
+      <span>{{ user.address }}</span>
+    </div>
+    <div class="detailItem">
+      <span>Broj telefona:</span>
+      <span>{{ user.phoneNumber }}</span>
+    </div>
+  </div>
+
+  <div class="skillsSection">
+    <h2>Veštine</h2>
+    <div class="skillsTable">
+      <div class="tableHeader">
+        <div class="column">Kategorija</div>
+        <div class="column">Opis</div>
+        <div class="column">Status</div>
+        <div class="column"></div>
+      </div>
+      <div class="tableRow" *ngFor="let offer of user.offers">
+        <div class="column">{{ offer.title }}</div>
+        <div class="column">{{ offer.description }}</div>
+        <div class="column">{{ offer.status }}</div>
+        <div class="column">
+          <button (click)="openSkillForm('edit', offer)">Izmeni</button>
+          <button (click)="openSkillForm('delete', offer)">Obriši</button>
+        </div>
+      </div>
+      <div class="tableRow">
+        <button class="newButton" (click)="openSkillForm('add')">Nova veština</button>
+      </div>
+    </div>
+  </div>
+
+  <app-skill-form 
+    *ngIf="showSkillForm" 
+    [mode]="showSkillForm" 
+    [skill]="selectedSkill" 
+    (onSave)="saveSkill($event)" 
+    (onDelete)="deleteSkill()" 
+    (onClose)="closeSkillForm()">
+  </app-skill-form>
+</div>

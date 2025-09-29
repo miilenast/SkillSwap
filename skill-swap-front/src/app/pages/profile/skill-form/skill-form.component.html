@@ -1,0 +1,43 @@
+<div class="modalOverlay">
+  <div class="modalContent">
+    <button class="closeButton" type="button" (click)="onClose.emit()">X</button>
+
+    <h3 *ngIf="mode !== 'delete'">{{ mode === 'edit' ? 'Izmeni veštinu' : 'Nova veština' }}</h3>
+    <h3 *ngIf="mode === 'delete'">Brisanje veštine</h3>
+    <p *ngIf="mode === 'delete'" class="deleteMessage">
+      Ovim ćete trajno izbrisati vašu veštinu: "{{ skill?.title }}"<br>
+      Da li ste sigurni da želite to da uradite?
+    </p>
+
+    <form *ngIf="mode !== 'delete'" (ngSubmit)="submit()">
+      <div class="formGroup">
+        <label>Kategorija</label>
+        <select [(ngModel)]="formData.title" name="title" required>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+
+      <div class="formGroup">
+        <label>Opis</label>
+        <textarea [(ngModel)]="formData.description" name="description" required></textarea>
+      </div>
+
+      <div class="formGroup">
+        <label>Status</label>
+        <select [(ngModel)]="formData.status" name="status" required>
+          <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+
+      <div class="actions">
+        <button type="button" (click)="onClose.emit()">Zatvori</button>
+        <button type="submit">Sačuvaj</button>
+      </div>
+    </form>
+
+    <div *ngIf="mode === 'delete'" class="actions">
+      <button (click)="onClose.emit()">Odustani</button>
+      <button (click)="onDelete.emit()">Obriši</button>
+    </div>
+  </div>
+</div>

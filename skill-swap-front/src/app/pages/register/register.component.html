@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="authBox">
+    <h1 class="heading">Registruj se</h1>
+    <form (ngSubmit)="submit()" class="form">
+
+      <div class="profileImageContainer">
+        <label *ngIf="!profilePreview" for="profilePicture" class="profileImageLabel">
+          Dodaj profilnu sliku
+          <input
+            type="file"
+            id="profilePicture"
+            (change)="handleFileChange($event)"
+            class="profileImageInput"
+          />
+        </label>
+      </div>
+
+      <div *ngIf="profilePreview" class="profilePreviewContainer">
+        <img [src]="profilePreview" alt="Preview" class="profilePreview" />
+      </div>
+
+      <input
+        type="text"
+        placeholder="Ime"
+        [(ngModel)]="formData.firstName"
+        name="firstName"
+        class="input"
+        required
+      />
+      <input
+        type="text"
+        placeholder="Prezime"
+        [(ngModel)]="formData.lastName"
+        name="lastName"
+        class="input"
+        required
+      />
+      <input
+        type="text"
+        placeholder="Korisničko ime"
+        [(ngModel)]="formData.username"
+        name="username"
+        class="input"
+        required
+      />
+      <input
+        type="email"
+        placeholder="Email"
+        [(ngModel)]="formData.email"
+        name="email"
+        class="input"
+        required
+      />
+      <input
+        type="password"
+        placeholder="Šifra"
+        [(ngModel)]="formData.password"
+        name="password"
+        class="input"
+        required
+      />
+      <input
+        type="text"
+        placeholder="Adresa"
+        [(ngModel)]="formData.address"
+        name="address"
+        class="input"
+        required
+      />
+      <input
+        type="tel"
+        placeholder="Broj telefona"
+        [(ngModel)]="formData.phoneNumber"
+        name="phoneNumber"
+        class="input"
+        required
+      />
+
+      <button type="submit" class="button">Registruj se</button>
+    </form>
+  </div>
+</div>

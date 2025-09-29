@@ -78,4 +78,49 @@ export class SkillRequestService {
       throw new NotFoundException(`SkillRequest with id ${id} not found`);
     }
   }
+
+  async findByUser(userId: number): Promise<SkillRequest[]> {
+    return this.skillRequestRepository.find({
+      where: { user: { id: userId } },
+      order: { id: 'DESC' },
+      relations: ['user'],
+    });
+  }
+
+  async getNearbyRequests(userId: number): Promise<SkillRequest[]> {
+    const myCategories =
+      await this.skillOfferService.findCategoriesByUser(userId);
+    if (myCategories.length === 0) {
+      return [];
+    }
+
+    const allRequests: SkillRequest[] = [];
+    for (const category of myCategories) {
+      const requests = await this.getNearbyRequestsByCategory(userId, category);
+      allRequests.push(...requests);
+    }
+    return allRequests;
+  }
+
+  async getNearbyRequestsByCategory(
+    userId: number,
+    category: string,
+  ): Promise<SkillRequest[]> {
+    const user = await this.userService.findOne(userId);
+
+    return this.skillRequestRepository
+      .createQueryBuilder('skillRequest')
+      .leftJoinAndSelect('skillRequest.user', 'user')
+      .where('user.id != :userId', { userId })
+      .andWhere('skillRequest.category = :category', { category })
+      .andWhere(
+        `6371 * acos(
+          cos(radians(:lat)) * cos(radians(user.latitude)) * 
+          cos(radians(user.longitude) - radians(:lng)) +
+          sin(radians(:lat)) * sin(radians(user.latitude))
+        ) < 5`,
+        { lat: user.latitude, lng: user.longitude },
+      )
+      .getMany();
+  }
 }

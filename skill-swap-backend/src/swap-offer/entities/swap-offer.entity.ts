@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { SkillOffer } from '../../skill-offer/entities/skill-offer.entity';
 import { SkillRequest } from '../../skill-request/entities/skill-request.entity';

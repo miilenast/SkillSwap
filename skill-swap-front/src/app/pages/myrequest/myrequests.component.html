@@ -1,0 +1,41 @@
+<div class="myRequestsContainer">
+  <h2>Moji zahtevi</h2>
+
+  <button class="addRequestButton" (click)="addNewRequest()">
+    Novi zahtev
+  </button>
+
+  <app-skill-request-form 
+    *ngIf="showForm"
+    (onClose)="showForm = false"
+    (onSave)="handleNewRequest($event)">
+  </app-skill-request-form>
+
+  <div *ngIf="loading" class="loading">
+    Učitavanje zahteva...
+  </div>
+
+  <div *ngIf="!loading && requests.length === 0" class="noRequests">
+    Nemate još nijedan zahtev.
+  </div>
+
+  <div *ngIf="!loading && requests.length > 0" class="requestsTable">
+    <div class="tableHeader">
+      <div class="column">Kategorija</div>
+      <div class="column">Opis</div>
+      <div class="column">Status</div>
+      <div class="column"></div>
+    </div>
+
+    <div class="tableRow" *ngFor="let req of requests">
+      <div class="column">{{ req.title }}</div>
+      <div class="column">{{ req.description }}</div>
+      <div class="column">{{ req.status }}</div>
+      <div class="column">
+        <button class="viewOffersButton" (click)="viewOffers(req.id)">
+          Pregled ponuda
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -62,5 +63,14 @@ export class SkillOfferService {
     });
     const users = offers.map((offer) => offer.user);
     return users;
+  }
+  async findCategoriesByUser(userId: number): Promise<SkillCategory[]> {
+    const offers = await this.skillOfferRepository
+      .createQueryBuilder('offer')
+      .where('offer.userId = :userId', { userId })
+      .select(['offer.title'])
+      .getRawMany();
+
+    return offers.map((offer) => offer.title as SkillCategory);
   }
 }

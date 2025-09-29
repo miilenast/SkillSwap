@@ -1,0 +1,16 @@
+<nav class="navbar">
+  <a routerLink="/" class="logo">Skill Swap</a>
+  <div class="navLinks">
+    <ng-container *ngIf="!authService.isLoggedIn(); else loggedIn">
+      <a routerLink="/login" class="navLink">Prijavi se</a>
+      <a routerLink="/register" class="navLink">Registruj se</a>
+    </ng-container>
+
+    <ng-template #loggedIn>
+      <a routerLink="/request-search" class="navLink">Pretraga zahteva</a>
+      <a routerLink="/myrequests" class="navLink">Moji zahtevi</a>
+      <a routerLink="/profile" class="navLink">Profil</a>
+      <button class="logoutButton" (click)="handleLogout()">Odjavi se</button>
+    </ng-template>
+  </div>
+</nav>

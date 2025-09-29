@@ -1,0 +1,26 @@
+<div class="modalOverlay">
+  <div class="modalContent">
+    <button class="closeButton" type="button" (click)="onClose.emit()">X</button>
+    
+    <h3>Novi zahtev</h3>
+
+    <form (ngSubmit)="submit()">
+      <div class="formGroup">
+        <label>Kategorija</label>
+        <select [(ngModel)]="formData.title" name="title" required>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+
+      <div class="formGroup">
+        <label>Opis</label>
+        <textarea [(ngModel)]="formData.description" name="description" required rows="4"></textarea>
+      </div>
+      
+      <div class="actions">
+        <button type="button" (click)="onClose.emit()">Zatvori</button>
+        <button type="submit" >Sačuvaj</button>
+      </div>
+    </form>
+  </div>
+</div>
