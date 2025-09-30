@@ -54,10 +54,14 @@ export class MyRequestsComponent implements OnInit {
   }
 
   handleNewRequest(newRequest: SkillRequest) {
-    const obs = this.skillRequestService.create(newRequest);
-    obs.subscribe({next: (data) => {
-      this.requests = [...this.requests, data];
-    }});
-    this.showForm = false;
+    this.skillRequestService.create(newRequest).subscribe({
+      next: (data) => {
+        this.requests = [...this.requests, data];
+        this.showForm = false;
+      },
+      error: (err) => {
+        console.error('Greška pri kreiranju zahteva', err);
+      }
+    });
   }
 }

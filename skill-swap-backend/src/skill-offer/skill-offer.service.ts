@@ -64,13 +64,22 @@ export class SkillOfferService {
     const users = offers.map((offer) => offer.user);
     return users;
   }
+
   async findCategoriesByUser(userId: number): Promise<SkillCategory[]> {
     const offers = await this.skillOfferRepository
       .createQueryBuilder('offer')
       .where('offer.userId = :userId', { userId })
-      .select(['offer.title'])
+      .select(['offer.title', 'title'])
       .getRawMany();
 
-    return offers.map((offer) => offer.title as SkillCategory);
+    const categories = offers.map((offer) => offer.title as SkillCategory);
+    return categories;
+  }
+
+  async findByUser(userId: number | undefined) {
+    return this.skillOfferRepository.find({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
   }
 }

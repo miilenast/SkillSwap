@@ -30,7 +30,12 @@ export class SkillRequestController {
   async getNearbyRequests(
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<SkillRequest[]> {
-    return this.skillRequestService.getNearbyRequests(userId);
+    try {
+      return await this.skillRequestService.getNearbyRequests(userId);
+    } catch (err) {
+      console.error('Greška pri dohvatanju requestova:', err);
+      throw new Error('Internal Server Error');
+    }
   }
 
   @Get('nearby/:userId/category/:category')

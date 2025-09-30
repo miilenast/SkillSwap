@@ -1,80 +1,82 @@
 import { Component, OnInit } from '@angular/core';
 import { SkillRequestService} from '../../services/request/skill-request.service';
 import { SkillRequest } from '../../models/request.model';
-import { FormBuilder, FormGroup, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SkillCategory } from '../../models/enums.model';
+import { SkillRequestFormComponent } from './make-offer/make-offer-component';
+import { SwapOfferService } from '../../services/swap-offer/swap-offer.service';
 
 @Component({
   selector: 'app-request-search',
   templateUrl: './request-search.component.html',
   styleUrls: ['./request-search.component.scss'],
   standalone: true,
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, SkillRequestFormComponent],
 })
 export class RequestSearchComponent implements OnInit {
   requests: SkillRequest[] = [];
-  filteredRequests: SkillRequest[] = [];
-  myCategory: SkillCategory | null = null;
-  filterForm: FormGroup;
-  offerForm: FormGroup;
-  selectedRequestId: number | null = null;
+  selectedCategory: SkillCategory | null = null;
+  selectedCategoryUnapplied: SkillCategory | null = null;
+  categories: SkillCategory[] = Object.values(SkillCategory);
+  selectedRequest: SkillRequest | null = null;
+  showOfferFormModal: boolean = false;
 
   constructor(
     private skillRequestService: SkillRequestService,
-    private fb: FormBuilder
-  ) {
-    this.filterForm = this.fb.group({
-      category: ['all']
-    });
-
-    this.offerForm = this.fb.group({
-      skillCategory: ['']
-    });
-  }
+    private swapOfferService: SwapOfferService,
+  ) {}
 
   ngOnInit(): void {
-    this.loadUserCategories();
+    this.loadUserRequests();
   }
 
-  loadUserCategories() {
-    if (this.myCategory !== null) {
-      this.skillRequestService.getNearbyRequestsByCategory(this.myCategory as string).subscribe((requests: SkillRequest[]): void => {
+  loadUserRequests() {
+    this.skillRequestService.getNearbyRequests().subscribe({
+      next: (requests: SkillRequest[]) => {
         this.requests = requests;
-        this.applyFilter();
-      });
-    } else {
-      this.requests = [];
-    }
-  }
-
-  loadRequests() {
-    this.skillRequestService.getNearbyRequests().subscribe((requests: SkillRequest[]): void => {
-      this.requests = requests;
-      this.applyFilter();
+      },
+      error: (err) => {
+        console.error('Greška pri učitavanju requestova:', err);
+      }
     });
   }
 
-  applyFilter() {
-    const selectedCategory = this.filterForm.value.category;
-    if (selectedCategory === 'all') {
-      this.filteredRequests = this.requests;
-    } else {
-      this.filteredRequests = this.requests.filter(r => r.title === selectedCategory);
+  filterByCategory() {
+    if (!this.selectedCategoryUnapplied) {
+      this.loadUserRequests();
+      return;
     }
+
+    if(this.selectedCategoryUnapplied === this.selectedCategory) return;
+
+    this.selectedCategory = this.selectedCategoryUnapplied;
+    this.skillRequestService.getNearbyRequestsByCategory(this.selectedCategory).subscribe({
+      next: (requests: SkillRequest[]) => {
+        this.requests = requests;
+      },
+      error: (err) => {
+        console.error('Greška pri filtriranju requestova:', err);
+      }
+    });
   }
 
-  openOfferForm(requestId: number) {
-    this.selectedRequestId = requestId;
-    this.offerForm.reset();
+  clearFilter(): void{
+    this.selectedCategory = null;
+    this.loadUserRequests();
   }
 
-  submitOffer() {
-    if (!this.selectedRequestId) return;
+  openOfferForm(request: SkillRequest) {
+    this.selectedRequest = this.requests.find(r => r.id === request.id) || null;
+    this.showOfferFormModal = true;
+  }
 
-    const selectedCategory = this.offerForm.value.skillCategory;
-    console.log('Ponuda za request', this.selectedRequestId, 'sa vestinom', selectedCategory);
-    alert('Razmena ponuđena!');
-    this.selectedRequestId = null;
+  closeOfferForm() {
+    this.showOfferFormModal = false;
+    this.selectedRequest = null;
+  }
+
+  viewProfile(userId: number) {
+    // this.router.navigate(['/profile', userId]);
   }
 }

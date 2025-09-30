@@ -1,0 +1,49 @@
+<div class="modalOverlay">
+    <div class="modalContent">
+        <button class="closeButton" type="button" (click)="onClose.emit()">X</button>
+
+        <h3>Ponudi razmenu za: {{ request?.title }}</h3>
+        
+        <form (ngSubmit)="submit()">
+            <div class="skills-list">
+                <label>Vaša veština koju nudite (Kategorija: {{ request?.title }}): </label>
+                <select 
+                    [(ngModel)]="selectedOfferedSkill" 
+                    name="selectedOfferedSkill" 
+                    required
+                    [disabled]="userSkillsMatchingCategory.length === 0"
+                >
+                    <ng-container *ngIf="userSkillsMatchingCategory.length > 0; else noSkills">
+                        <option *ngFor="let skill of userSkillsMatchingCategory" [ngValue]="skill">
+                            {{ skill.title }} - {{ skill.description }}
+                        </option>
+                    </ng-container>
+                </select>
+                <ng-template #noSkills>
+                    <p class="text-red-500">
+                        Nemate dostupne veštine u kategoriji {{ request?.title }} za ponudu.
+                    </p>
+                </ng-template>
+            </div>
+
+            <div class="skills-list">
+                <label>Veština koju tražite od tražioca zauzvrat:</label>
+                <select [(ngModel)]="selectedRequestedSkill" name="selectedRequestedSkill" required>
+                    <option *ngFor="let skill of requesterSkills" [ngValue]="skill">
+                        {{ skill.title }} - {{ skill.description }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="actions">
+                <button type="button" (click)="onClose.emit()">Zatvori</button>
+                <button 
+                    type="submit"
+                    [disabled]="!selectedOfferedSkill || !selectedRequestedSkill"
+                >
+                    Pošalji ponudu
+                </button>
+            </div>
+        </form>
+  </div>
+</div>

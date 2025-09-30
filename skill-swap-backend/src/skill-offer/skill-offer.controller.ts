@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { SkillOfferService } from './skill-offer.service';
 import { CreateSkillOfferDto } from './dto/create-skill-offer.dto';
@@ -26,6 +27,11 @@ export class SkillOfferController {
     @Request() req: { user: User },
   ) {
     return this.skillOfferService.create(createSkillOfferDto, req.user);
+  }
+
+  @Get()
+  findByUser(@Query('userId') userId?: number) {
+    return this.skillOfferService.findByUser(userId);
   }
 
   @Get()

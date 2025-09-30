@@ -36,7 +36,7 @@ export class ProfileComponent implements OnInit {
     })
       .then(res => res.json())
       .then(data => {
-        this.skillService.getUserSkills(userId, token).subscribe(skills => {
+        this.skillService.getUserSkills(localStorage.getItem('userId')!).subscribe(skills => {
           this.user = { ...data, offers: skills };
         });
       })

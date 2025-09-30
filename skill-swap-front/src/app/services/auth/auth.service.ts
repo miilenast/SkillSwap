@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -28,14 +28,23 @@ export class AuthService {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.post(`${this.apiUrl}/user/${userId}/profile-picture`, formData, { headers });
   }
-
+  
   loginRequest(data: { username: string; password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/login`, data).pipe(
       tap((res: any) => {
         if (res && res.access_token) {
           localStorage.setItem('token', res.access_token);
-          localStorage.setItem('userId', JSON.stringify(res.user));
           this.loggedInSubject.next(true);
+        }
+      }),
+      switchMap(() => {
+        const token = localStorage.getItem('token');
+        const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+        return this.http.get(`${this.apiUrl}/auth/profile`, { headers });
+      }),
+      tap((user: any) => {
+        if (user?.id) {
+          localStorage.setItem('userId', user.id.toString());
         }
       })
     );

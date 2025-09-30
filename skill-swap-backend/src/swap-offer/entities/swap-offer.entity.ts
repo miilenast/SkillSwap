@@ -2,7 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { SkillOffer } from '../../skill-offer/entities/skill-offer.entity';
 import { SkillRequest } from '../../skill-request/entities/skill-request.entity';
 import { SwapOfferStatus } from '../../enums/swap-offer-status.enum';
-import { User } from 'src/user/entities/user.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Entity()
 export class SwapOffer {
@@ -16,12 +16,15 @@ export class SwapOffer {
   })
   status: SwapOfferStatus;
 
+  @ManyToOne(() => SkillRequest, (requestedSkill) => requestedSkill.swapOffers)
+  request: SkillRequest;
+
   @ManyToOne(() => User, (user) => user.madeSwapOffers)
   offerer: User;
 
   @ManyToOne(() => SkillOffer, (offeredSkill) => offeredSkill.swapOffers)
   offeredSkill: SkillOffer;
 
-  @ManyToOne(() => SkillRequest, (requestedSkill) => requestedSkill.swapOffers)
-  requestedSkill: SkillRequest;
+  @ManyToOne(() => SkillOffer, (requestedSkill) => requestedSkill.swapOffers)
+  requestedSkill: SkillOffer;
 }

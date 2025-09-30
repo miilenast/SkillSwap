@@ -7,8 +7,8 @@ import {
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { SwapOffer } from '../../swap-offer/entities/swap-offer.entity';
-import { SkillOfferStatus } from 'src/enums/skill-offer-status.enum';
-import { SkillCategory } from 'src/enums/skill-category.enum';
+import { SkillOfferStatus } from '../../enums/skill-offer-status.enum';
+import { SkillCategory } from '../../enums/skill-category.enum';
 
 @Entity()
 export class SkillOffer {

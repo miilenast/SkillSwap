@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Request,
+  UnauthorizedException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { SwapOfferService } from './swap-offer.service';
 import { CreateSwapOfferDto } from './dto/create-swap-offer.dto';
@@ -20,11 +22,22 @@ export class SwapOfferController {
   constructor(private readonly swapOfferService: SwapOfferService) {}
 
   @UseGuards(JwtAuthGuard)
+  @Get('request/:requestId')
+  async getOffersForRequest(
+    @Param('requestId', ParseIntPipe) requestId: number,
+  ) {
+    return this.swapOfferService.findAllOffersForRequest(requestId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(
     @Body() createSwapOfferDto: CreateSwapOfferDto,
     @Request() req: { user: User },
   ) {
+    if (!req.user) {
+      throw new UnauthorizedException('Korisnik nije autentifikovan!');
+    }
     return this.swapOfferService.create(createSwapOfferDto, req.user);
   }
 

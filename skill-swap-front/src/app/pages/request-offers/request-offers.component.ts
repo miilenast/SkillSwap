@@ -23,7 +23,8 @@ export class RequestOffersComponent implements OnInit {
   userId: number = localStorage.getItem('userId') ? +localStorage.getItem('userId')! : 0;
   hasAccepted = false;
   request!: SkillRequest;
-SwapOfferStatus: any;
+
+  public readonly SwapOfferStatus = SwapOfferStatus;
 
   constructor(
     private route: ActivatedRoute,
@@ -34,18 +35,27 @@ SwapOfferStatus: any;
 
   ngOnInit() {
     this.requestId = +this.route.snapshot.paramMap.get('id')!;
-    this.requestService.getOne(this.requestId).subscribe((request) => {
-      this.request = request;
-      this.loadOffers();
+    this.requestService.getOne(this.requestId).subscribe({
+      next: (req) => {
+        this.request = req;
+        this.loadOffers();
+      },
+      error: (err) => {
+        console.error('Error fetching request:', err);
+      }
     });
   }
 
   loadOffers() {
-    // this.offerService.getOffersForRequest(this.requestId).subscribe((offers) => {
-    //   // filtriramo da vidi samo vlasnik zahteva
-    //   this.offers = offers;
-    //   this.hasAccepted = this.offers.some(o => o.status === 'ACCEPTED');
-    // });
+    this.offerService.getAll(this.requestId).subscribe({
+      next: (offers) => {
+        this.offers = offers;
+        this.hasAccepted = this.offers.some(o => o.status === SwapOfferStatus.ACCEPTED);
+      },
+      error: (err) => {
+        console.error('Error fetching offers:', err);
+      }
+    });
   }
 
   viewProfile(userId: number) {
@@ -55,7 +65,14 @@ SwapOfferStatus: any;
   acceptOffer(offer: SwapOffer) {
     offer.status = SwapOfferStatus.ACCEPTED;
     this.hasAccepted = true;
-    this.offerService.update(offer.id, { status: SwapOfferStatus.ACCEPTED }).subscribe();
+    this.offerService.update(offer.id, { status: SwapOfferStatus.ACCEPTED }).subscribe({
+      next: () => {
+        this.loadOffers();
+      },
+      error: (err) => {
+        console.error('Error accepting offer:', err);
+      }
+    });
 
     this.offers.filter(o => o.id !== offer.id).forEach(o => {
       this.rejectOffer(o);
@@ -64,6 +81,10 @@ SwapOfferStatus: any;
 
   rejectOffer(offer: SwapOffer) {
     offer.status = SwapOfferStatus.REJECTED;
-    this.offerService.update(offer.id, { status: SwapOfferStatus.REJECTED }).subscribe();
+    this.offerService.update(offer.id, { status: SwapOfferStatus.REJECTED }).subscribe({
+      error: (err) => {
+        console.error('Error rejecting offer:', err);
+      }
+    });
   }
 }

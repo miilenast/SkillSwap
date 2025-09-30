@@ -17,35 +17,53 @@ export class SwapOfferService {
     private skillRequestService: SkillRequestService,
   ) {}
 
+  findAllOffersForRequest(requestId: number): Promise<SwapOffer[]> {
+    console.log('Service method called with requestId:', requestId);
+    return this.swapOfferRepository.find({
+      where: { request: { id: requestId } },
+      relations: ['offerer', 'offeredSkill', 'requestedSkill', 'request'],
+    });
+  }
+
   async create(
     createSwapOfferDto: CreateSwapOfferDto,
     user: User,
   ): Promise<SwapOffer> {
+    console.log(createSwapOfferDto);
     const offeredSkill = await this.skillOfferService.findOne(
       createSwapOfferDto.offeredSkillId,
     );
-    const requestedSkill = await this.skillRequestService.findOne(
+    console.log('Offered Skill:', offeredSkill);
+    const requestedSkill = await this.skillOfferService.findOne(
       createSwapOfferDto.requestedSkillId,
     );
+    const request = await this.skillRequestService.findOne(
+      createSwapOfferDto.requestId,
+    );
+    console.log('Requested Skill:', requestedSkill);
+    if (!offeredSkill || !requestedSkill || !request) {
+      throw new NotFoundException('Offered or requested skill not found');
+    }
 
     const swapOffer = this.swapOfferRepository.create({
       offerer: user,
       offeredSkill: offeredSkill,
       requestedSkill: requestedSkill,
+      request: request,
     });
     return this.swapOfferRepository.save(swapOffer);
   }
 
   async findAll(): Promise<SwapOffer[]> {
     return this.swapOfferRepository.find({
-      relations: ['offerer', 'offeredSkill', 'requestedSkill'],
+      relations: ['offerer', 'offeredSkill', 'requestedSkill', 'request'],
     });
   }
 
   async findOne(id: number): Promise<SwapOffer> {
     const offer = await this.swapOfferRepository.findOne({
       where: { id },
-      relations: ['offerer', 'offeredSkill', 'requestedSkill'],
+      relations: ['offerer', 'offeredSkill', 'requestedSkill', 'request'],
     });
     if (!offer) {
       throw new NotFoundException(`SwapOffer with id ${id} not found`);
@@ -60,7 +78,7 @@ export class SwapOfferService {
     await this.swapOfferRepository.update(id, updateSwapOfferDto);
     const offer = await this.swapOfferRepository.findOne({
       where: { id },
-      relations: ['offeredSkill', 'requestedSkill', 'offerer'],
+      relations: ['offeredSkill', 'requestedSkill', 'offerer', 'request'],
     });
     if (!offer) {
       throw new NotFoundException(`SwapOffer with id ${id} not found`);

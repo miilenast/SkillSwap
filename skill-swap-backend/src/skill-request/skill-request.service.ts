@@ -7,6 +7,7 @@ import { UpdateSkillRequestDto } from './dto/update-skill-request.dto';
 import { User } from 'src/user/entities/user.entity';
 import { SkillOfferService } from 'src/skill-offer/skill-offer.service';
 import { UserService } from 'src/user/user.service';
+import { SkillRequestStatus } from 'src/enums/skill-request-status.enum';
 
 @Injectable()
 export class SkillRequestService {
@@ -107,17 +108,21 @@ export class SkillRequestService {
     category: string,
   ): Promise<SkillRequest[]> {
     const user = await this.userService.findOne(userId);
+    if (!user) return [];
 
     return this.skillRequestRepository
       .createQueryBuilder('skillRequest')
-      .leftJoinAndSelect('skillRequest.user', 'user')
-      .where('user.id != :userId', { userId })
-      .andWhere('skillRequest.category = :category', { category })
+      .leftJoinAndSelect('skillRequest.user', 'u')
+      .where('u.id != :userId', { userId })
+      .andWhere('"skillRequest"."status" = :status', {
+        status: SkillRequestStatus.PENDING,
+      })
+      .andWhere('skillRequest.title = :category', { category })
       .andWhere(
         `6371 * acos(
-          cos(radians(:lat)) * cos(radians(user.latitude)) * 
-          cos(radians(user.longitude) - radians(:lng)) +
-          sin(radians(:lat)) * sin(radians(user.latitude))
+          cos(radians(:lat)) * cos(radians(u.latitude)) * 
+          cos(radians(u.longitude) - radians(:lng)) +
+          sin(radians(:lat)) * sin(radians(u.latitude))
         ) < 5`,
         { lat: user.latitude, lng: user.longitude },
       )

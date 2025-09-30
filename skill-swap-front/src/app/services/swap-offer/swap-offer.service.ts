@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SwapOffer } from '../../models/swap-offer.model';
 
@@ -11,23 +11,28 @@ export class SwapOfferService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<SwapOffer[]> {
-    return this.http.get<SwapOffer[]>(this.apiUrl);
+  create(offer: any): Observable<SwapOffer> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
+    return this.http.post<SwapOffer>(this.apiUrl, offer, { headers });
+  }
+
+  getAll(requestId: number): Observable<SwapOffer[]> {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
+    return this.http.get<SwapOffer[]>(`${this.apiUrl}/request/${requestId}`, { headers });
   }
 
   getOne(id: number): Observable<SwapOffer> {
-    return this.http.get<SwapOffer>(`${this.apiUrl}/${id}`);
-  }
-
-  create(offer: Partial<SwapOffer>): Observable<SwapOffer> {
-    return this.http.post<SwapOffer>(this.apiUrl, offer);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
+    return this.http.get<SwapOffer>(`${this.apiUrl}/${id}`, { headers });
   }
 
   update(id: number, offer: Partial<SwapOffer>): Observable<SwapOffer> {
-    return this.http.patch<SwapOffer>(`${this.apiUrl}/${id}`, offer);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
+    return this.http.patch<SwapOffer>(`${this.apiUrl}/${id}`, offer, { headers });
   }
 
   delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
   }
 }

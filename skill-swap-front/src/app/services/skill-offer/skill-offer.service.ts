@@ -11,7 +11,17 @@ export class SkillService {
 
   constructor(private http: HttpClient) {}
 
-  getUserSkills(userId: string, token: string): Observable<Skill[]> {
+  getUserSkills(userId: string): Observable<Skill[]> {
+    const token = localStorage.getItem('token');
+
+    if (!token || !userId) {
+      console.error('No token or userId found');
+      return new Observable<Skill[]>(observer => {
+        observer.next([]);
+        observer.complete();
+      });
+    }
+
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return this.http.get<Skill[]>(`${this.apiUrl}/skill-offer?userId=${userId}`, { headers });
   }

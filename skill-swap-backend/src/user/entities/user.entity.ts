@@ -2,8 +2,8 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { SkillOffer } from '../../skill-offer/entities/skill-offer.entity';
 import { SkillRequest } from '../../skill-request/entities/skill-request.entity';
-import { Review } from 'src/review/entities/review.entity';
-import { Message } from 'src/message/entities/message.entity';
+import { Review } from '../../review/entities/review.entity';
+import { Message } from '../../message/entities/message.entity';
 
 @Entity()
 export class User {

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { SkillRequest } from '../../models/request.model';
 
 @Injectable({
@@ -43,6 +43,10 @@ export class SkillRequestService {
 
   getNearbyRequests(): Observable<SkillRequest[]> {
     const userId = localStorage.getItem('userId');
+    if(!userId) {
+      console.error('UserId nije u localStorage!');
+      return of([]);
+    }
     return this.http.get<SkillRequest[]>(`${this.apiUrl}/nearby/${userId}`);
   }
 
