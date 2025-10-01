@@ -1,0 +1,44 @@
+.profile-modal-content {
+  position: relative;
+  padding: 20px 30px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h2.mat-dialog-title {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #333;
+  margin-bottom: 10px;
+  text-align: center;
+  width: 100%;
+}
+
+.close-button {
+    position: absolute;
+    top: 5px;   
+    right: 5px; 
+    z-index: 10;
+}
+
+.close-button mat-icon { 
+    color: #555;
+    transition: color 0.2s;
+}
+
+.close-button:hover .mat-icon {
+    color: #ff0000;
+}
+
+.content-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+mat-dialog-content p {
+    text-align: center;
+    color: #888;
+}

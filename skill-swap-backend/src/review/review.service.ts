@@ -15,6 +15,31 @@ export class ReviewService {
     private readonly userRepository: Repository<User>,
   ) {}
 
+  async getRatingByReviewer(
+    reviewerId: number,
+    reviewedUserId: number,
+  ): Promise<{ rating: number; reviewId?: number }> {
+    const review = await this.reviewRepository.findOne({
+      where: {
+        reviewer: { id: reviewerId },
+        reviewedUser: { id: reviewedUserId },
+      },
+      select: ['id', 'rating'],
+    });
+
+    if (review) {
+      return { rating: review.rating, reviewId: review.id };
+    }
+    return { rating: 0, reviewId: 0 };
+  }
+
+  async getReviewsReceivedByUser(reviewedUserId: number): Promise<Review[]> {
+    return this.reviewRepository.find({
+      where: { reviewedUser: { id: reviewedUserId } },
+      relations: ['reviewer'],
+    });
+  }
+
   async create(
     reviewerId: number,
     createReviewDto: CreateReviewDto,
@@ -32,7 +57,7 @@ export class ReviewService {
     }
 
     const review = this.reviewRepository.create({
-      ...createReviewDto,
+      rating: createReviewDto.rating,
       reviewer,
       reviewedUser,
     });
@@ -48,15 +73,25 @@ export class ReviewService {
     return this.reviewRepository.findOne({ where: { id } });
   }
 
-  async update(id: number, updateReviewDto: UpdateReviewDto): Promise<Review> {
-    await this.reviewRepository.update(id, updateReviewDto);
-    const updatedReview = await this.reviewRepository.findOne({
+  async update(
+    id: number,
+    updateReviewDto: UpdateReviewDto,
+    currentUserId: number,
+  ): Promise<Review> {
+    const existingReview = await this.reviewRepository.findOne({
       where: { id },
+      relations: ['reviewer'],
     });
-    if (!updatedReview) {
+    if (!existingReview) {
       throw new BadRequestException(`Review with id ${id} not found`);
     }
-    return updatedReview;
+
+    if (existingReview.reviewer.id !== currentUserId) {
+      throw new BadRequestException(`You can only update your own reviews`);
+    }
+
+    Object.assign(existingReview, updateReviewDto);
+    return this.reviewRepository.save(existingReview);
   }
 
   async remove(id: number): Promise<void> {

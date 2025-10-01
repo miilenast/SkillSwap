@@ -11,6 +11,12 @@ export class SkillRequestService {
 
   constructor(private http: HttpClient) {}
 
+  update(id: number, updateDto: Partial<SkillRequest>): Observable<SkillRequest> {
+    console.log(id, updateDto, localStorage.getItem('token'));
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
+    return this.http.patch<SkillRequest>(`${this.apiUrl}/${id}`, updateDto, { headers });
+  }
+
   getAll(): Observable<SkillRequest[]> {
     let token = localStorage.getItem('token');
     if (!token) {

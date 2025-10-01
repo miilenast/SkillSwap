@@ -9,9 +9,6 @@ export class Review {
   @Column({ type: 'int' })
   rating: number;
 
-  @Column()
-  comment: string;
-
   @ManyToOne(() => User, (user) => user.givenReviews)
   reviewer: User;
 

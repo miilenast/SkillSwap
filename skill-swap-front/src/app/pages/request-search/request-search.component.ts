@@ -6,6 +6,9 @@ import { CommonModule } from '@angular/common';
 import { SkillCategory } from '../../models/enums.model';
 import { SkillRequestFormComponent } from './make-offer/make-offer-component';
 import { SwapOfferService } from '../../services/swap-offer/swap-offer.service';
+import { UserProfileModalComponent } from '../../shared/user-profile-modal/user-profile-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-request-search',
@@ -25,6 +28,8 @@ export class RequestSearchComponent implements OnInit {
   constructor(
     private skillRequestService: SkillRequestService,
     private swapOfferService: SwapOfferService,
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -77,6 +82,13 @@ export class RequestSearchComponent implements OnInit {
   }
 
   viewProfile(userId: number) {
-    // this.router.navigate(['/profile', userId]);
+    if (userId) {
+      this.dialog.open(UserProfileModalComponent, {
+        width: '400px',
+        data: { userId: userId }
+      });
+    } else {
+      console.error('Invalid user ID provided for profile view.');
+    }
   }
 }

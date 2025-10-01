@@ -1,0 +1,39 @@
+<div class="contact-modal-content">
+    
+    <button mat-icon-button mat-dialog-close class="close-button">
+        <mat-icon>close</mat-icon>
+    </button>
+
+    <h2 mat-dialog-title>{{ data.ime }} {{ data.prezime }}</h2>
+    
+    <mat-dialog-content class="modal-content">
+        <p class="contact-number">Kontakt telefon: <strong>{{ data.phoneNumber }}</strong></p>
+
+        <hr>
+        <div class="finalize-section">
+            <p class="prompt">
+                Da li ste završili sa razmenom veština?
+                Ako jeste, molimo vas da ocenite korisnika i potvrdite da je razmena završena.
+            </p>
+            <div class="rating-container">
+                <span class="rating-label">
+                    {{ isAlreadyRated ? 'Ažuriraj ocenu:' : 'Oceni korisnika:' }}
+                </span>
+                <div class="stars-wrapper">
+                    <mat-icon
+                        *ngFor="let star of stars"
+                        (click)="rate(star)"
+                        class="star-icon"
+                        [ngClass]="{'star-filled': star <= starRating, 'star-empty': star > starRating}">
+                    star
+                    </mat-icon>
+                </div>
+            </div>
+            <button mat-raised-button color="primary" (click)="finalizeSwap()">
+                Razmena završena
+            </button>
+        </div>"
+    </mat-dialog-content>
+
+    <mat-dialog-actions></mat-dialog-actions>
+</div>

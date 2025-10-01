@@ -15,66 +15,65 @@
   }
 
   .filter-bar {
-  display: flex;
-  justify-content: flex-end; 
-  margin-bottom: 20px;
-
-  .filter-group {
     display: flex;
-    flex-direction: column;
-    align-items: flex-end; 
-    gap: 5px;
+    justify-content: flex-end; 
+    margin-bottom: 20px;
 
-    select {
-      width: 250px;
-      padding: 5px 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      background-color: #fff;
-      cursor: pointer;
-      font-size: 14px;
-      height: 35px;
-      font-weight: bold;
-
-      &:focus {
-        outline: none;
-        border-color: #54a0f1;
-        box-shadow: 0 0 5px rgba(84,160,241,0.5);
-      }
-    }
-
-    .buttons {
+    .filter-group {
       display: flex;
-      width: 250px;
-      justify-content: space-between;
-      gap: 10px;
+      flex-direction: column;
+      align-items: flex-end; 
+      gap: 5px;
 
-      button {
-        flex: 1;
-        padding: 5px 15px;
-        border: none;
+      select {
+        width: 250px;
+        padding: 5px 10px;
         border-radius: 5px;
-        background-color: #54a0f1;
-        color: #fff;
+        border: 1px solid #ccc;
+        background-color: #fff;
         cursor: pointer;
-        font-weight: bold;
         font-size: 14px;
         height: 35px;
-        transition: background-color 0.2s;
-
-        &:hover {
-          background-color: #54a0f1cc;
-        }
+        font-weight: bold;
 
         &:focus {
           outline: none;
+          border-color: #54a0f1;
           box-shadow: 0 0 5px rgba(84,160,241,0.5);
+        }
+      }
+
+      .buttons {
+        display: flex;
+        width: 250px;
+        justify-content: space-between;
+        gap: 10px;
+
+        button {
+          flex: 1;
+          padding: 5px 15px;
+          border: none;
+          border-radius: 5px;
+          background-color: #54a0f1;
+          color: #fff;
+          cursor: pointer;
+          font-weight: bold;
+          font-size: 14px;
+          height: 35px;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background-color: #54a0f1cc;
+          }
+
+          &:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(84,160,241,0.5);
+          }
         }
       }
     }
   }
-}
-
 
   table {
     width: 100%;
@@ -118,9 +117,21 @@
         background-color: #218838;
       }
     }
+
+    .username-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .username-link:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
   }
 
-  /* Inline forma za ponudu razmene */
   div[style*="border: 1px solid #ccc"] {
     background-color: #fafafa;
     border-radius: 5px;

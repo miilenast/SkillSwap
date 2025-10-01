@@ -1,0 +1,18 @@
+<div class="profile-modal-content">
+  <button mat-icon-button mat-dialog-close class="close-button">
+    <mat-icon>close</mat-icon> 
+  </button>
+
+  <h2 mat-dialog-title>Profil korisnika</h2>
+  
+  <mat-dialog-content *ngIf="isLoading">
+    <p>Učitavanje podataka...</p>
+    </mat-dialog-content>
+
+  <mat-dialog-content *ngIf="!isLoading && userProfileData">
+    <app-user-card 
+        [user]="userProfileData" 
+        
+        ></app-user-card>
+  </mat-dialog-content>
+</div>

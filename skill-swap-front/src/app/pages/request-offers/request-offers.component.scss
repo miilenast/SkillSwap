@@ -25,15 +25,18 @@
         flex: 1;
         padding: 0 0.5rem;
       }
-
-      .linkButton {
-        background: none;
-        border: none;
-        color: #3498db;
+      
+      .username-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
         cursor: pointer;
+        transition: color 0.2s;
+      }
+
+      .username-link:hover {
+        color: #0056b3;
         text-decoration: underline;
-        padding: 0;
-        font-size: 1rem;
       }
 
       button {

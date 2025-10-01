@@ -7,26 +7,42 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseIntPipe,
+  Request,
 } from '@nestjs/common';
-import { Req } from '@nestjs/common';
-import { Request as ExpressRequest } from 'express';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { User } from '../user/entities/user.entity';
 
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @UseGuards(JwtAuthGuard)
+  @Get('user/:reviewedUserId')
+  async getRatingForUser(
+    @Param('reviewedUserId', ParseIntPipe) reviewedUserId: number,
+    @Request() req: { user: User },
+  ) {
+    return this.reviewService.getRatingByReviewer(req.user.id, reviewedUserId);
+  }
+
+  @Get('received/:reviewedUserId')
+  async getReceivedReviews(
+    @Param('reviewedUserId', ParseIntPipe) reviewedUserId: number,
+  ) {
+    return this.reviewService.getReviewsReceivedByUser(reviewedUserId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(
     @Body() createReviewDto: CreateReviewDto,
-    @Req() req: ExpressRequest & { user: { id: number } },
+    @Request() req: { user: User },
   ) {
-    const userId = req.user.id;
-    return this.reviewService.create(userId, createReviewDto);
+    return this.reviewService.create(req.user.id, createReviewDto);
   }
 
   @Get()
@@ -40,9 +56,13 @@ export class ReviewController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReviewDto: UpdateReviewDto) {
-    return this.reviewService.update(+id, updateReviewDto);
+  @Patch(':reviewId')
+  update(
+    @Param('reviewId', ParseIntPipe) reviewId: number,
+    @Body() updateReviewDto: UpdateReviewDto,
+    @Request() req: { user: User },
+  ) {
+    return this.reviewService.update(reviewId, updateReviewDto, +req.user.id);
   }
 
   @UseGuards(JwtAuthGuard)

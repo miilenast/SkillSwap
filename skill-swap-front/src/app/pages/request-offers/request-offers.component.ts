@@ -1,14 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SkillRequestService } from '../../services/request/skill-request.service';
-import { Skill } from '../../models/skill.model';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { SwapOfferStatus } from '../../models/enums.model';
+import { SkillRequestStatus, SwapOfferStatus } from '../../models/enums.model';
 import { SwapOffer } from '../../models/swap-offer.model';
 import { SwapOfferService } from '../../services/swap-offer/swap-offer.service';
-import { SkillRequest } from '../../services/request/skill-request';
+import { SkillRequest } from '../../models/request.model';
+import { forkJoin, map, Observable } from 'rxjs';
+import { UserProfileModalComponent } from '../../shared/user-profile-modal/user-profile-modal.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ContactInfoModal } from '../../shared/contact-info-modal/contact-info-modal.component';
+import { RatingResponse, ReviewService } from '../../services/review/review.service';
+import { ContactDialogData } from '../../shared/contact-info-modal/contact-info-modal.component';
 
 @Component({
   selector: 'app-request-offers',
@@ -30,7 +34,8 @@ export class RequestOffersComponent implements OnInit {
     private route: ActivatedRoute,
     private offerService: SwapOfferService,
     private requestService: SkillRequestService,
-    private router: Router
+    private reviewService: ReviewService,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -59,32 +64,81 @@ export class RequestOffersComponent implements OnInit {
   }
 
   viewProfile(userId: number) {
-    // this.router.navigate(['/profile', userId]);
+    if (userId) {
+      this.dialog.open(UserProfileModalComponent, {
+        width: '400px',
+        data: { userId: userId }
+      });
+    } else {
+      console.error('Invalid user ID provided for profile view.');
+    }
   }
 
   acceptOffer(offer: SwapOffer) {
     offer.status = SwapOfferStatus.ACCEPTED;
     this.hasAccepted = true;
-    this.offerService.update(offer.id, { status: SwapOfferStatus.ACCEPTED }).subscribe({
+    const acceptedOffer$ = this.offerService.update(offer.id, { status: SwapOfferStatus.ACCEPTED });
+    const updateRequest$ = this.request
+      ? this.requestService.update(this.requestId, { status: SkillRequestStatus.ACCEPTED })
+      : new Observable(subscriber => subscriber.complete());
+    const rejectedObservables = this.offers
+      .filter(o => o.id !== offer.id)
+      .map(o => this.rejectOffer(o));
+
+    forkJoin([acceptedOffer$, updateRequest$, ...rejectedObservables]).subscribe({
       next: () => {
         this.loadOffers();
       },
       error: (err) => {
-        console.error('Error accepting offer:', err);
+        console.error('Error processing offers:', err);
+        this.loadOffers();
       }
-    });
-
-    this.offers.filter(o => o.id !== offer.id).forEach(o => {
-      this.rejectOffer(o);
     });
   }
 
-  rejectOffer(offer: SwapOffer) {
+  rejectOffer(offer: SwapOffer): Observable<SwapOffer> | void {
     offer.status = SwapOfferStatus.REJECTED;
-    this.offerService.update(offer.id, { status: SwapOfferStatus.REJECTED }).subscribe({
-      error: (err) => {
-        console.error('Error rejecting offer:', err);
-      }
-    });
+    return this.offerService.update(offer.id, { status: SwapOfferStatus.REJECTED }).pipe(
+      map(() => offer)
+    );
+  }
+
+  showContactInfo(offer: SwapOffer) {
+    const phoneNumber = offer.offerer.phoneNumber;
+    const ime = offer.offerer.firstName;
+    const prezime = offer.offerer.lastName;
+    const partnerId = offer.offerer.id;
+
+    if(phoneNumber) {
+      this.reviewService.getRatingByReviewer(partnerId).subscribe({
+        next: (_response: RatingResponse) => {
+          const dialogData: ContactDialogData = {
+            phoneNumber: phoneNumber,
+            ime: ime,
+            prezime: prezime,
+            requestId: this.requestId,
+            partnerId: partnerId,
+            currentRating: _response.rating,
+            existingReviewId: _response.reviewId || null,
+          }
+          console.log('Opening contact info modal with data:', dialogData);
+          this.dialog.open(ContactInfoModal, { 
+            width: '400px',
+            data: dialogData
+          });
+        },
+        error: (err) => {
+          console.error('Error fetching rating:', err);
+        }
+      });
+    } else {
+      this.dialog.open(UserProfileModalComponent, { 
+        data: { 
+            message: 'Korisnik nije uneo broj telefona. Ne možete da ga kontaktirate.',
+            isAlert: true
+        } 
+      });
+      return;
+    }
   }
 }

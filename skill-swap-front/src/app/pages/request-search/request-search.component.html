@@ -32,9 +32,11 @@
     <tbody>
       <tr *ngFor="let req of requests">
         <td>
-          <button class="linkButton" (click)="viewProfile(req.user.id)">
+          <span 
+            class="username-link" 
+            (click)="viewProfile(req.user.id)">
             {{ '@' + req.user.username }}
-          </button>
+          </span>
         </td>
         <td>{{ req.title }}</td>
         <td>{{ req.description }}</td>

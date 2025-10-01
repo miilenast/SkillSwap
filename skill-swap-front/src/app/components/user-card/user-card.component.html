@@ -1,0 +1,29 @@
+<div class="user-card">
+  
+  <div class="user-avatar-container" *ngIf="user.profilePicture">
+    <img [src]="user.profilePicture" alt="Profilna slika" class="profile-picture">
+  </div>
+
+  <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+
+  <p class="phone-number" *ngIf="showPhoneNumber && user.phoneNumber">
+    Telefon: <strong>{{ user.phoneNumber }}</strong>
+  </p>
+
+  <div class="skills-section">
+    <h4>Veštine korisnika</h4>
+    
+    <div *ngIf="activeSkills.length === 0" class="no-skills">
+        Nema aktivnih veština za prikaz.
+    </div>
+
+    <ul class="skill-list" *ngIf="activeSkills.length > 0">
+      <li *ngFor="let skill of activeSkills">
+        <div class="skill-item">
+          <strong class="skill-category">{{ skill.title }}:</strong>
+          <span class="skill-description">{{ skill.description }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

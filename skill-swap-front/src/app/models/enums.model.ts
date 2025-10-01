@@ -2,6 +2,7 @@ export enum SwapOfferStatus {
   PENDING = 'na čekanju',
   ACCEPTED = 'prihvaćeno',
   REJECTED = 'odbijeno',
+  DONE = 'završeno',
 }
 
 export enum SkillOfferStatus {
@@ -29,5 +30,5 @@ export enum SkillCategory {
 export enum SkillRequestStatus {
   PENDING = 'na čekanju',
   ACCEPTED = 'prihvaćeno',
-  CANCELED = 'otkazano',
+  DONE = 'završeno',
 }

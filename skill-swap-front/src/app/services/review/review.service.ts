@@ -1,7 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Review } from '../../models/review.model';
+
+export interface RatingResponse {
+  rating: number; 
+  reviewId?: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -11,23 +16,34 @@ export class ReviewService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Review[]> {
-    return this.http.get<Review[]>(this.apiUrl);
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token nije pronađen u localStorage.');
+    }
+    return new HttpHeaders({ 
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}` 
+    });
   }
 
-  getOne(id: number): Observable<Review> {
-    return this.http.get<Review>(`${this.apiUrl}/${id}`);
+  getRatingByReviewer(reviewedUserId: number): Observable<RatingResponse> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<RatingResponse>(`${this.apiUrl}/user/${reviewedUserId}`, { headers });
   }
 
-  create(review: Partial<Review>): Observable<Review> {
-    return this.http.post<Review>(this.apiUrl, review);
+  create(reviewData: { rating: number, reviewedUserId: number }): Observable<Review> {
+    const headers = this.getAuthHeaders();
+    return this.http.post<Review>(this.apiUrl, reviewData, { headers });
   }
 
-  update(id: number, review: Partial<Review>): Observable<Review> {
-    return this.http.patch<Review>(`${this.apiUrl}/${id}`, review);
+  update(reviewId: number, updateData: { rating: number }): Observable<Review> {
+    const headers = this.getAuthHeaders();
+    return this.http.patch<Review>(`${this.apiUrl}/${reviewId}`, updateData, { headers });
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  getReviewsReceivedByUser(reviewedUserId: number): Observable<Review[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<Review[]>(`${this.apiUrl}/received/${reviewedUserId}`, { headers });
   }
 }
