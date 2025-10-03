@@ -5,10 +5,12 @@ import { CommonModule } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { UserCardComponent } from '../../components/user-card/user-card.component';
 import { SkillService } from '../../services/skill-offer/skill-offer.service';
-import { switchMap } from 'rxjs';
+import { forkJoin, switchMap } from 'rxjs';
 import { Skill } from '../../models/skill.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { ReviewService } from '../../services/review/review.service';
+import { Review } from '../../models/review.model';
 
 export interface DialogData {
   userId: number;
@@ -24,11 +26,14 @@ export interface DialogData {
 export class UserProfileModalComponent implements OnInit {
   userProfileData!: UserCardData;
   isLoading = true;
+  averageRating: number | null = null;
+  totalReviews: number = 0;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private userService: UserService ,
-    private skillService: SkillService
+    private skillService: SkillService,
+    private reviewService: ReviewService,
   ) {}
 
   ngOnInit() {
@@ -38,8 +43,12 @@ export class UserProfileModalComponent implements OnInit {
   loadUserProfile() {
     this.isLoading = true;
 
-    this.userService.getUserById(this.data.userId).pipe(
-      switchMap(user => {
+    const user$ = this.userService.getUserById(this.data.userId);
+    const skills$ = this.skillService.getUserSkills(this.data.userId.toString());
+    const reviews$ = this.reviewService.getReviewsReceived(this.data.userId);
+
+    forkJoin({ user: user$, skills: skills$, reviews: reviews$ }).subscribe({
+      next: ({ user, skills, reviews }) => {
         let profilePictureValue = '';
         if (typeof user.profilePicture === 'string' && 
             user.profilePicture !== '[null]' && 
@@ -54,22 +63,29 @@ export class UserProfileModalComponent implements OnInit {
           lastName: user.lastName ?? '',
           profilePicture: profilePictureValue,
           phoneNumber: user.phoneNumber ?? '',
-          skills: user.skills || []
+          skills: skills
         };
-        console.log(`User ID: ${user.id}, Profile Picture: ${profilePictureValue}`);
-        return this.skillService.getUserSkills(user.id?.toString() || '');
-      })
-    ).subscribe({
-      next: (skills: Skill[]) => {
-        if(this.userProfileData) {
-          this.userProfileData.skills = skills;
-        }
+        
+        this.calculateRating(reviews);
+        
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error loading user profile or skills:', err);
+        console.error('Error loading user profile data:', err);
         this.isLoading = false;
       }
     });
+  }
+
+  calculateRating(reviews: Review[]) {
+    if (reviews && reviews.length > 0) {
+      this.totalReviews = reviews.length;
+      const sum = reviews.reduce((acc, review) => acc + (review.rating ?? 0), 0);
+      this.averageRating = parseFloat((sum / reviews.length).toFixed(2)); 
+    }
+    else {
+      this.averageRating = null;
+      this.totalReviews = 0;
+    }
   }
 }

@@ -6,6 +6,9 @@ import { AuthService } from '../../services/auth/auth.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { SkillFormComponent } from './skill-form/skill-form.component';
+import { Review } from '../../services/review/review';
+import { ReviewService } from '../../services/review/review.service';
+import { map, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -18,11 +21,38 @@ export class ProfileComponent implements OnInit {
   user: User | null = null;
   showSkillForm: 'edit' | 'delete' | 'add' | null = null;
   selectedSkill: Skill | null = null;
+  averageRating: number | null = null;
+  totalReviews: number = 0;
 
-  constructor(private skillService: SkillService, private authService: AuthService) {}
+  constructor(
+    private skillService: SkillService,
+    private authService: AuthService,
+    private reviewService: ReviewService,
+  ) {}
 
   ngOnInit(): void {
     this.fetchUserData();
+  }
+
+  fetchAverageRating() {
+    if (this.user?.id !== undefined) {
+      this.reviewService.getReviewsReceived(this.user.id).subscribe({
+        next: (reviews: Review[]) => {
+          if (reviews && reviews.length > 0) {
+            const sum = reviews.reduce((acc, review) => acc + (review.rating ?? 0), 0);
+            this.averageRating = parseFloat((sum / reviews.length).toFixed(2));
+            this.totalReviews = reviews.length;
+          }
+          else {
+            this.averageRating = null;
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching ratings:', err);
+          this.averageRating = null;
+        }
+      });
+    }
   }
 
   fetchUserData() {
@@ -36,9 +66,16 @@ export class ProfileComponent implements OnInit {
     })
       .then(res => res.json())
       .then(data => {
-        this.skillService.getUserSkills(localStorage.getItem('userId')!).subscribe(skills => {
-          this.user = { ...data, offers: skills };
-        });
+        this.skillService.getUserSkills(localStorage.getItem('userId')!).pipe(
+          tap(skills => {
+            this.user = { ...data, offers: skills };
+            this.fetchAverageRating();
+          }),
+          switchMap(() => {
+            const currentUserId = localStorage.getItem('userId');
+            return currentUserId ? this.reviewService.getReviewsReceived(+currentUserId) : of([]);
+          })
+        ).subscribe();
       })
       .catch(err => console.error(err));
   }

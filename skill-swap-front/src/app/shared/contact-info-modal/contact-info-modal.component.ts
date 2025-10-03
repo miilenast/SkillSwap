@@ -5,9 +5,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { SkillRequestService } from '../../services/request/skill-request.service';
-import { SkillRequestStatus } from '../../models/enums.model';
+import { SkillRequestStatus, SwapOfferStatus } from '../../models/enums.model';
 import { ReviewService } from '../../services/review/review.service';
 import { forkJoin, Observable, of } from 'rxjs';
+import { SwapOfferService } from '../../services/swap-offer/swap-offer.service';
 
 export interface ContactDialogData {
   phoneNumber: string;
@@ -17,6 +18,7 @@ export interface ContactDialogData {
   partnerId: number;
   currentRating: number;
   existingReviewId: number | null;
+  acceptedOfferId: null | number;
 }
 
 @Component({
@@ -34,6 +36,7 @@ export class ContactInfoModal implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ContactDialogData,
     private requestService: SkillRequestService,
+    private swapOfferService: SwapOfferService,
     private reviewService: ReviewService,
     private dialogRef: MatDialogRef<ContactInfoModal>
   ) {}
@@ -66,12 +69,21 @@ export class ContactInfoModal implements OnInit {
     }
     
     const finalizeRequest$ = this.requestService.update(this.data.requestId, { status: SkillRequestStatus.DONE });
-    forkJoin([updateRating$, finalizeRequest$]).subscribe({
+
+    let finalizeOffer$: Observable<any>;
+    if (this.data.acceptedOfferId) {
+      finalizeOffer$ = this.swapOfferService.update(this.data.acceptedOfferId, { status: SwapOfferStatus.DONE });
+    }
+    else {
+      finalizeOffer$ = of(true);
+    }
+    
+    forkJoin([updateRating$, finalizeRequest$, finalizeOffer$]).subscribe({
       next: () => {
         this.dialogRef.close(true);
       },
       error: (err) => {
-        console.error('Error finalizing swap or updating rating:', err);
+        console.error('Error finalizing swap', err);
         this.dialogRef.close(false);
       }
     });

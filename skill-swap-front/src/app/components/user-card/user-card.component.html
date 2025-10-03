@@ -6,6 +6,15 @@
 
   <h2>{{ user.firstName }} {{ user.lastName }}</h2>
 
+  <div *ngIf="averageRating !== null" class="ratingDisplay">
+    <span class="ratingText">Prosečna ocena: </span>
+    <span class="ratingValue">{{ averageRating | number:'1.2-2' }}/5</span>
+    <svg class="starIcon" viewBox="0 0 24 24" fill="#FFD700" stroke="none">
+        <path d="M12 .587l3.668 7.568 8.332 1.208-6.002 5.869 1.416 8.332-7.414-3.89-7.414 3.89 1.416-8.332-6.002-5.869 8.332-1.208z"/>
+    </svg>
+    <span class="reviewCount">({{ totalReviews }})</span>
+  </div>
+
   <p class="phone-number" *ngIf="showPhoneNumber && user.phoneNumber">
     Telefon: <strong>{{ user.phoneNumber }}</strong>
   </p>

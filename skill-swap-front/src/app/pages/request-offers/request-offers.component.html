@@ -29,7 +29,7 @@
         <ng-container [ngSwitch]="offer.status">
           <ng-container *ngSwitchCase="SwapOfferStatus.PENDING">
               <button (click)="acceptOffer(offer)" class="accept-btn">Prihvati</button>
-              <button (click)="rejectOffer(offer)" class="reject-btn">Odbij</button>
+              <button (click)="handleRejectOffer(offer)" class="reject-btn">Odbij</button>
           </ng-container>
 
           <ng-container *ngSwitchCase="SwapOfferStatus.ACCEPTED">

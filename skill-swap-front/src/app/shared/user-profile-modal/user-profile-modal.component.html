@@ -11,8 +11,9 @@
 
   <mat-dialog-content *ngIf="!isLoading && userProfileData">
     <app-user-card 
-        [user]="userProfileData" 
-        
-        ></app-user-card>
+      [user]="userProfileData"
+      [averageRating]="averageRating" 
+      [totalReviews]="totalReviews">
+    </app-user-card>
   </mat-dialog-content>
 </div>

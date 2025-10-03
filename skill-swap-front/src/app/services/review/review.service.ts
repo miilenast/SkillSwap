@@ -27,7 +27,7 @@ export class ReviewService {
     });
   }
 
-  getRatingByReviewer(reviewedUserId: number): Observable<RatingResponse> {
+  getRatingForUser(reviewedUserId: number): Observable<RatingResponse> {
     const headers = this.getAuthHeaders();
     return this.http.get<RatingResponse>(`${this.apiUrl}/user/${reviewedUserId}`, { headers });
   }
@@ -42,7 +42,7 @@ export class ReviewService {
     return this.http.patch<Review>(`${this.apiUrl}/${reviewId}`, updateData, { headers });
   }
 
-  getReviewsReceivedByUser(reviewedUserId: number): Observable<Review[]> {
+  getReviewsReceived(reviewedUserId: number): Observable<Review[]> {
     const headers = this.getAuthHeaders();
     return this.http.get<Review[]>(`${this.apiUrl}/received/${reviewedUserId}`, { headers });
   }

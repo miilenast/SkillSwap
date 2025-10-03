@@ -96,11 +96,22 @@ export class RequestOffersComponent implements OnInit {
     });
   }
 
-  rejectOffer(offer: SwapOffer): Observable<SwapOffer> | void {
+  rejectOffer(offer: SwapOffer): Observable<SwapOffer> {
     offer.status = SwapOfferStatus.REJECTED;
     return this.offerService.update(offer.id, { status: SwapOfferStatus.REJECTED }).pipe(
       map(() => offer)
     );
+  }
+
+  handleRejectOffer(offer: SwapOffer) {
+    this.rejectOffer(offer).subscribe({
+      next: () => {
+        this.loadOffers();
+      },
+      error: (err) => {
+        console.error('Error rejecting offer:', err);
+      }
+    });
   }
 
   showContactInfo(offer: SwapOffer) {
@@ -108,9 +119,11 @@ export class RequestOffersComponent implements OnInit {
     const ime = offer.offerer.firstName;
     const prezime = offer.offerer.lastName;
     const partnerId = offer.offerer.id;
+    const acceptedOffer = this.offers.find(o => o.status === SwapOfferStatus.ACCEPTED);
+    const accepterOfferId = acceptedOffer ? acceptedOffer.id : null;
 
     if(phoneNumber) {
-      this.reviewService.getRatingByReviewer(partnerId).subscribe({
+      this.reviewService.getRatingForUser(partnerId).subscribe({
         next: (_response: RatingResponse) => {
           const dialogData: ContactDialogData = {
             phoneNumber: phoneNumber,
@@ -120,11 +133,16 @@ export class RequestOffersComponent implements OnInit {
             partnerId: partnerId,
             currentRating: _response.rating,
             existingReviewId: _response.reviewId || null,
+            acceptedOfferId: accepterOfferId,
           }
           console.log('Opening contact info modal with data:', dialogData);
           this.dialog.open(ContactInfoModal, { 
             width: '400px',
             data: dialogData
+          }).afterClosed().subscribe(result => {
+            if(result) {
+              this.loadOffers();
+            }
           });
         },
         error: (err) => {

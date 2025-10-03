@@ -87,3 +87,37 @@ h4 {
 .skill-description {
     color: #666;
 }
+
+.ratingDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 5px; 
+  padding: 5px 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  color: #1f2937; 
+}
+
+.ratingText {
+    font-weight: 500;
+    margin-right: 5px;
+}
+
+.ratingValue {
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+.starIcon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+}
+
+.reviewCount {
+    color: #6b7280;
+    font-weight: 500;
+    margin-right: 5px;
+}

@@ -14,8 +14,11 @@ import { Skill } from '../../models/skill.model';
 export class UserCardComponent {
   @Input({ required: true }) user!: UserCardData;
   @Input() showPhoneNumber: boolean = false;
-  
+  @Input({ required: true }) averageRating: number | null = null;
+  @Input({ required: true }) totalReviews: number = 0;
+
   get activeSkills(): Skill[] {
+    console.log(`average rating: ${this.averageRating}`);
     if(!this.user.skills) {
       return [];
     }
