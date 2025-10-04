@@ -25,6 +25,20 @@ export class SwapOfferService {
     });
   }
 
+  async findAllOffersByOffererId(offererId: number): Promise<SwapOffer[]> {
+    console.log(offererId);
+    return this.swapOfferRepository.find({
+      where: { offerer: { id: offererId } },
+      relations: [
+        'offerer',
+        'offeredSkill',
+        'requestedSkill',
+        'request',
+        'request.user',
+      ],
+    });
+  }
+
   async create(
     createSwapOfferDto: CreateSwapOfferDto,
     user: User,

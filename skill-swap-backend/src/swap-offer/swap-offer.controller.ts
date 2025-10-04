@@ -22,6 +22,21 @@ export class SwapOfferController {
   constructor(private readonly swapOfferService: SwapOfferService) {}
 
   @UseGuards(JwtAuthGuard)
+  @Get('offerer/:offererId')
+  async getOffererByOffererId(
+    @Param('offererId', ParseIntPipe) offererId: number,
+    @Request() req: { user: User },
+  ) {
+    console.log('Controller method called with offererId:', offererId);
+    if (req.user.id !== offererId) {
+      throw new UnauthorizedException(
+        'Nije dozvoljen pristup ponudama drugog korisnika!',
+      );
+    }
+    return this.swapOfferService.findAllOffersByOffererId(offererId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('request/:requestId')
   async getOffersForRequest(
     @Param('requestId', ParseIntPipe) requestId: number,

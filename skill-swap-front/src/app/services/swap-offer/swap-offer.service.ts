@@ -16,6 +16,14 @@ export class SwapOfferService {
     return this.http.post<SwapOffer>(this.apiUrl, offer, { headers });
   }
 
+  getOffersByOffererId(offererId: number): Observable<SwapOffer[]> {
+    if(!localStorage.getItem('token')) {
+      throw new Error('User not authenticated');
+    }
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
+    return this.http.get<SwapOffer[]>(`${this.apiUrl}/offerer/${offererId}`, { headers });
+  }
+
   getAll(requestId: number): Observable<SwapOffer[]> {
     const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
     return this.http.get<SwapOffer[]>(`${this.apiUrl}/request/${requestId}`, { headers });

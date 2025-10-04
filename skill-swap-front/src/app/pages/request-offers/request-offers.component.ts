@@ -23,10 +23,14 @@ import { ContactDialogData } from '../../shared/contact-info-modal/contact-info-
 })
 export class RequestOffersComponent implements OnInit {
   requestId!: number;
+  allOffers: SwapOffer[] = [];
   offers: SwapOffer[] = [];
   userId: number = localStorage.getItem('userId') ? +localStorage.getItem('userId')! : 0;
   hasAccepted = false;
   request!: SkillRequest;
+  selectedStatusUnapplied: SwapOfferStatus | null = null;
+  selectedStatusApplied: SwapOfferStatus | null = null;
+  offerStatusValues: string[] = Object.values(SwapOfferStatus);
 
   public readonly SwapOfferStatus = SwapOfferStatus;
 
@@ -54,13 +58,61 @@ export class RequestOffersComponent implements OnInit {
   loadOffers() {
     this.offerService.getAll(this.requestId).subscribe({
       next: (offers) => {
-        this.offers = offers;
+        this.allOffers = offers;
+        this.applySort(this.allOffers);
+        this.applyFilter();
+        this.hasAccepted = this.offers.some(o => o.status === SwapOfferStatus.ACCEPTED);
+        const statusOrder = [ SwapOfferStatus.DONE, SwapOfferStatus.ACCEPTED, SwapOfferStatus.PENDING, SwapOfferStatus.REJECTED ];
+        const sortOffers = (a: SwapOffer, b: SwapOffer) => {
+          const indexA = statusOrder.indexOf(a.status);
+          const indexB = statusOrder.indexOf(b.status);
+          if(indexA === -1 && indexB !== -1) return 1;
+          if(indexA !== -1 && indexB === -1) return -1;
+          if(indexA === -1 && indexB === -1) return 0;
+          return indexA - indexB;
+        }
+
+        this.offers = offers.sort(sortOffers);
         this.hasAccepted = this.offers.some(o => o.status === SwapOfferStatus.ACCEPTED);
       },
       error: (err) => {
         console.error('Error fetching offers:', err);
       }
     });
+  }
+
+  applySort(list: any[]) {
+    const statusOrder = [ SwapOfferStatus.DONE, SwapOfferStatus.ACCEPTED, SwapOfferStatus.PENDING, SwapOfferStatus.REJECTED ];
+    const sortOffers = (a: SwapOffer, b: SwapOffer) => {
+      const indexA = statusOrder.indexOf(a.status);
+      const indexB = statusOrder.indexOf(b.status);
+      if(indexA === -1 && indexB !== -1) return 1;
+      if(indexA !== -1 && indexB === -1) return -1;
+      if(indexA === -1 && indexB === -1) return 0;
+      return indexA - indexB;
+    }
+    this.offers = list.sort(sortOffers);
+  }
+
+  applyFilter() {
+    let filteredOffers = this.allOffers;
+    if (this.selectedStatusApplied) {
+      filteredOffers = filteredOffers.filter(offer => 
+        offer.status === this.selectedStatusApplied
+      );
+    }
+    this.applySort(filteredOffers);
+  }
+
+  filterByStatus() {
+    this.selectedStatusApplied = this.selectedStatusUnapplied;
+    this.applyFilter();
+  }
+
+  clearStatusFilter() {
+    this.selectedStatusApplied = null;
+    this.selectedStatusUnapplied = null;
+    this.applyFilter();
   }
 
   viewProfile(userId: number) {

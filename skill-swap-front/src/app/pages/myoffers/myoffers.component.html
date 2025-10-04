@@ -15,17 +15,17 @@
 </div>
 
 <div class="offersContainer">
-  <h2>Ponude za zahtev: {{ request?.title }} ({{ request?.description }})</h2>
+  <h2>Moje Ponude</h2>
 
   <div *ngIf="offers.length === 0" class="noOffers">
-    <h4>Trenutno nema ponuda.</h4>
+    <h4>Trenutno niste poslali nijednu ponudu.</h4>
   </div>
 
   <div class="offersTable" *ngIf="offers.length > 0">
     <div class="tableHeader">
-      <div class="column">Korisnik</div>
-      <div class="column">Ponuda</div>
-      <div class="column">Zauzvrat</div>
+      <div class="column">Zahtevao (Korisnik)</div>
+      <div class="column">Potrebna usluga (Zahtev)</div>
+      <div class="column">Uzvratih uslugom (Ponuda)</div>
       <div class="column">Status</div>
       <div class="column">Akcija</div>
     </div>
@@ -33,33 +33,37 @@
     <div class="tableRow" *ngFor="let offer of offers">
       <div class="column">
         <span 
-            class="username-link" 
-            (click)="viewProfile(offer.offerer.id)">
-            {{ '@' + offer.offerer.username }}
-          </span>
+          class="username-link" 
+          (click)="viewRequestOwnerProfile(offer.request.user.id)">
+          {{ '@' + offer.request.user.username }}
+        </span>
       </div>
-      <div class="column">{{ offer.offeredSkill.title }} - {{ offer.offeredSkill.description }}</div>
-      <div class="column">{{ offer.requestedSkill.title }} - {{ offer.requestedSkill.description }}</div>
+      <div class="column">{{ offer.requestedSkill.title }}</div>
+      <div class="column">{{ offer.offeredSkill.title }}</div>
       <div class="column">{{ offer.status }}</div>
       <div class="column">
         <ng-container [ngSwitch]="offer.status">
-          <ng-container *ngSwitchCase="SwapOfferStatus.PENDING">
-              <button (click)="acceptOffer(offer)" class="accept-btn">Prihvati</button>
-              <button (click)="handleRejectOffer(offer)" class="reject-btn">Odbij</button>
-          </ng-container>
-
-          <ng-container *ngSwitchCase="SwapOfferStatus.ACCEPTED">
-              <button 
-                (click)="showContactInfo(offer)" 
-                class="contact-btn">
-                Kontaktiraj / Završi
-              </button>
-          </ng-container>
-
-          <span *ngSwitchCase="SwapOfferStatus.REJECTED" class="rejected-status"></span>
-
-          <span *ngSwitchCase="SwapOfferStatus.DONE" class="completed-status"></span>
           
+          <ng-container *ngSwitchCase="SwapOfferStatus.ACCEPTED">
+            <button 
+              (click)="handleAction(offer)" 
+              class="contact-btn">
+              Kontaktiraj
+            </button>
+          </ng-container>
+
+          <ng-container *ngSwitchCase="SwapOfferStatus.DONE">
+            <button 
+              (click)="handleAction(offer)" 
+              class="complete-btn">
+              Oceni partnera
+            </button>
+          </ng-container>
+
+          <span *ngSwitchCase="SwapOfferStatus.REJECTED" class="rejected-status">Odbijeno</span>
+          
+          <span *ngSwitchCase="SwapOfferStatus.PENDING" class="pending-status">Na čekanju</span>
+
           <span *ngSwitchDefault>Status: {{ offer.status }}</span>
         </ng-container>
       </div>

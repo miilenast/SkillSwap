@@ -1,0 +1,27 @@
+.contact-modal-content {
+    padding: 24px;
+    position: relative;
+    
+    .close-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+    }
+    
+    h2 {
+        text-align: center;
+        margin-top: 0;
+        font-size: 1.5em;
+    }
+
+    .contact-number {
+        text-align: center;
+        strong {
+            font-size: 1.1em;
+        }
+    }
+    
+    .modal-content {
+        padding: 0;
+    }
+}

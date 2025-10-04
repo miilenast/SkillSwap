@@ -4,6 +4,7 @@ import { SwapOfferStatus } from './enums.model';
 import { User } from './user.model';
 
 export interface SwapOffer {
+  request: any;
   id: number;
   status: SwapOfferStatus;
   offerer: User;

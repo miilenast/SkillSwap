@@ -15,15 +15,28 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     overflow: hidden;
+    background-color: #fff;
 
-    .tableHeader,
+    .tableHeader {
+      background-color: #f8f9fa;
+      font-weight: bold;
+      border-bottom: 1px solid #ccc;
+    }
+
     .tableRow {
       display: flex;
       padding: 0.75rem 0.5rem;
+      border-bottom: 1px solid #eee; 
+      
+      &:last-child {
+        border-bottom: none;
+      }
 
       .column {
         flex: 1;
         padding: 0 0.5rem;
+        display: flex;
+        align-items: center; // Centriranje sadržaja unutar kolone po vertikali
       }
       
       .username-link {
@@ -40,17 +53,26 @@
       }
 
       button {
-        margin-right: 0.5rem;
         padding: 0.4rem 0.8rem;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        background-color: #54a0f1;
         color: white;
+        transition: background-color 0.2s;
       }
 
-      button:hover {
-        background-color: #3498db;
+      .contact-btn, .complete-btn {
+        background-color: #28a745; /* Zelena za akciju/kontakt */
+        margin-right: 0.5rem;
+      }
+      
+      .contact-btn:hover, .complete-btn:hover {
+        background-color: #218838;
+      }
+      
+      .rejected-status, .pending-status {
+          font-weight: bold;
+          color: #6c757d;
       }
     }
   }
@@ -59,8 +81,9 @@
 .filter-bar {
   display: flex;
   justify-content: flex-end; 
-  margin-top: 20px;
-  margin-right: 20px;
+  max-width: 900px;
+  margin: 20px auto 0;
+  padding: 0 2rem;
 
   .filter-group {
     display: flex;
@@ -116,4 +139,12 @@
       }
     }
   }
+}
+
+.noOffers {
+    text-align: center;
+    padding: 2rem;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    margin-top: 2rem;
 }

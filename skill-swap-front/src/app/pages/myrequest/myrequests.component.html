@@ -1,3 +1,21 @@
+<div class="filter-bar">
+  <div class="filter-group">
+    <select [(ngModel)]="selectedStatusUnapplied">
+      <option [ngValue]="null">Svi zahtevi</option>
+      
+      <option *ngFor="let statusValue of requestStatusValues" [value]="statusValue">
+        {{ statusValue }}
+      </option>
+      
+    </select>
+    
+    <div class="buttons">
+      <button (click)="filterByStatus()">Primeni filter</button>
+      <button (click)="clearStatusFilter()">Očisti filter</button>
+    </div>
+  </div>
+</div>
+
 <div class="myRequestsContainer">
   <h2>Moji zahtevi</h2>
 
