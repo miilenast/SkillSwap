@@ -28,28 +28,7 @@ export class SkillRequestService {
     });
     const savedRequest = await this.skillRequestRepository.save(skillRequest);
 
-    void this.sendNotifications(savedRequest);
-
     return savedRequest;
-  }
-
-  private async sendNotifications(skillRequest: SkillRequest) {
-    console.log(`Sending notifications for new request: ${skillRequest.title}`);
-
-    const usersWithMatchingOffers =
-      await this.skillOfferService.findUsersBySkillCategory(skillRequest.title);
-
-    const nearbyUsers = this.userService.filterUsersByDistance(
-      usersWithMatchingOffers,
-      skillRequest.user,
-      10,
-    );
-
-    for (const user of nearbyUsers) {
-      console.log(
-        `Sending notification to ${user.username} about new request: ${skillRequest.title}`,
-      );
-    }
   }
 
   findAll(): Promise<SkillRequest[]> {

@@ -16,6 +16,12 @@
     border-radius: 8px;
     overflow: hidden;
 
+    .tableHeader {
+      background-color: #f0f0f0;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
     .tableHeader,
     .tableRow {
       display: flex;

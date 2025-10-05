@@ -1,10 +1,53 @@
 
+.rating-form-wrapper {
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    background-color: #fff;
+    text-align: center;
+    position:relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 5px; 
+    right: 5px;
+
+    color: #999;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px; 
+    line-height: 1;
+    z-index: 10;
+
+    &:hover {
+        color: #333;
+        background-color: #f0f0f0;
+        border-radius: 50%;
+    }
+
+    mat-icon {
+        font-size: 24px; 
+    }
+}
+
+
+h2{
+    font-size: 1.5em;
+    font-weight: 600;
+    margin-top: 0; 
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
 .rating-container {
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 25px;
-    padding: 5px 0;
+    padding: 10px 15px;
     border: 1px solid #f0f0f0;
     border-radius: 8px;
 }
@@ -41,7 +84,7 @@
 }
 
 button[mat-raised-button] {
-    background-color: #28a745; 
+    background-color: #54a0f1; 
     color: white;
     font-weight: 600;
     padding: 10px 25px;
@@ -49,5 +92,5 @@ button[mat-raised-button] {
 }
 
 button[mat-raised-button]:hover {
-    background-color: #218838;
+    background-color: #54a0f1cc;
 }

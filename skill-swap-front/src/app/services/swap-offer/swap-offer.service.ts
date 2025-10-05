@@ -12,35 +12,26 @@ export class SwapOfferService {
   constructor(private http: HttpClient) {}
 
   create(offer: any): Observable<SwapOffer> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.post<SwapOffer>(this.apiUrl, offer, { headers });
+    return this.http.post<SwapOffer>(this.apiUrl, offer);
   }
 
   getOffersByOffererId(offererId: number): Observable<SwapOffer[]> {
-    if(!localStorage.getItem('token')) {
-      throw new Error('User not authenticated');
-    }
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.get<SwapOffer[]>(`${this.apiUrl}/offerer/${offererId}`, { headers });
+    return this.http.get<SwapOffer[]>(`${this.apiUrl}/offerer/${offererId}`);
   }
 
   getAll(requestId: number): Observable<SwapOffer[]> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.get<SwapOffer[]>(`${this.apiUrl}/request/${requestId}`, { headers });
+    return this.http.get<SwapOffer[]>(`${this.apiUrl}/request/${requestId}`);
   }
 
   getOne(id: number): Observable<SwapOffer> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.get<SwapOffer>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.get<SwapOffer>(`${this.apiUrl}/${id}`);
   }
 
   update(id: number, offer: Partial<SwapOffer>): Observable<SwapOffer> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.patch<SwapOffer>(`${this.apiUrl}/${id}`, offer, { headers });
+    return this.http.patch<SwapOffer>(`${this.apiUrl}/${id}`, offer);
   }
 
   delete(id: number): Observable<void> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

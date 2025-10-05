@@ -23,11 +23,11 @@
 
   <div class="offersTable" *ngIf="offers.length > 0">
     <div class="tableHeader">
-      <div class="column">Zahtevao (Korisnik)</div>
-      <div class="column">Potrebna usluga (Zahtev)</div>
-      <div class="column">Uzvratih uslugom (Ponuda)</div>
+      <div class="column">Podnosilac zahteva</div>
+      <div class="column">Od mene se traži:</div>
+      <div class="column">Zahtevam zauzvrat:</div>
       <div class="column">Status</div>
-      <div class="column">Akcija</div>
+      <div class="column"></div>
     </div>
 
     <div class="tableRow" *ngFor="let offer of offers">
@@ -38,8 +38,8 @@
           {{ '@' + offer.request.user.username }}
         </span>
       </div>
-      <div class="column">{{ offer.requestedSkill.title }}</div>
-      <div class="column">{{ offer.offeredSkill.title }}</div>
+      <div class="column">{{ offer.requestedSkill.title }} - {{ offer.requestedSkill.description }}</div>
+      <div class="column">{{ offer.offeredSkill.title }} - {{ offer.offeredSkill.description }}</div>
       <div class="column">{{ offer.status }}</div>
       <div class="column">
         <ng-container [ngSwitch]="offer.status">
@@ -64,7 +64,7 @@
           
           <span *ngSwitchCase="SwapOfferStatus.PENDING" class="pending-status">Na čekanju</span>
 
-          <span *ngSwitchDefault>Status: {{ offer.status }}</span>
+          <span *ngSwitchDefault></span>
         </ng-container>
       </div>
     </div>

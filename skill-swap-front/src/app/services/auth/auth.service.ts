@@ -9,14 +9,7 @@ import { switchMap, tap } from 'rxjs/operators';
 export class AuthService {
   private apiUrl = 'http://localhost:3000';
 
-  private loggedInSubject = new BehaviorSubject<boolean>(this.hasToken());
-  public loggedIn$ = this.loggedInSubject.asObservable();
-
   constructor(private http: HttpClient) {}
-
-  private hasToken(): boolean {
-    return !!localStorage.getItem('token');
-  }
 
   register(userData: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/register`, userData);
@@ -25,38 +18,19 @@ export class AuthService {
   uploadProfilePicture(userId: number, token: string, file: File): Observable<any> {
     const formData = new FormData();
     formData.append('profilePicture', file);
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post(`${this.apiUrl}/user/${userId}/profile-picture`, formData, { headers });
+    return this.http.post(`${this.apiUrl}/user/${userId}/profile-picture`, formData);
   }
   
   loginRequest(data: { username: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, data).pipe(
-      tap((res: any) => {
-        if (res && res.access_token) {
-          localStorage.setItem('token', res.access_token);
-          this.loggedInSubject.next(true);
-        }
-      }),
-      switchMap(() => {
-        const token = localStorage.getItem('token');
-        const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-        return this.http.get(`${this.apiUrl}/auth/profile`, { headers });
-      }),
-      tap((user: any) => {
-        if (user?.id) {
-          localStorage.setItem('userId', user.id.toString());
-        }
-      })
-    );
+    return this.http.post(`${this.apiUrl}/auth/login`, data);
+  }
+
+  getProfile(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/auth/profile`);
   }
 
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('userId');
-    this.loggedInSubject.next(false);
-  }
-
-  isLoggedIn(): boolean {
-    return this.loggedInSubject.value;
   }
 }

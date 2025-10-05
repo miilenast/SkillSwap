@@ -12,32 +12,26 @@ export class SkillService {
   constructor(private http: HttpClient) {}
 
   getUserSkills(userId: string): Observable<Skill[]> {
-    const token = localStorage.getItem('token');
-
-    if (!token || !userId) {
-      console.error('No token or userId found');
+    if (!userId) {
+      console.error('No userId found');
       return new Observable<Skill[]>(observer => {
         observer.next([]);
         observer.complete();
       });
     }
 
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.get<Skill[]>(`${this.apiUrl}/skill-offer?userId=${userId}`, { headers });
+    return this.http.get<Skill[]>(`${this.apiUrl}/skill-offer?userId=${userId}`);
   }
 
-  addSkill(skill: Skill, token: string): Observable<Skill> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` });
-    return this.http.post<Skill>(`${this.apiUrl}/skill-offer`, skill, { headers });
+  addSkill(skill: Skill): Observable<Skill> {
+    return this.http.post<Skill>(`${this.apiUrl}/skill-offer`, skill);
   }
 
-  editSkill(skill: Skill, token: string): Observable<Skill> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${token}` });
-    return this.http.patch<Skill>(`${this.apiUrl}/skill-offer/${skill.id}`, skill, { headers });
+  editSkill(skill: Skill): Observable<Skill> {
+    return this.http.patch<Skill>(`${this.apiUrl}/skill-offer/${skill.id}`, skill);
   }
 
-  deleteSkill(skillId: number, token: string): Observable<void> {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.delete<void>(`${this.apiUrl}/skill-offer/${skillId}`, { headers });
+  deleteSkill(skillId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/skill-offer/${skillId}`);
   }
 }

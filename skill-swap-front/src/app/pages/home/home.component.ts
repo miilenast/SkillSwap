@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from '../../services/auth/auth.service';
 import { CommonModule } from '@angular/common';
+import { selectIsLoggedIn } from '../../services/auth/state/auth.selector';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-home',
@@ -13,9 +15,9 @@ import { CommonModule } from '@angular/common';
 export class HomeComponent implements OnInit {
   isLoggedIn$!: Observable<boolean>;
 
-  constructor(private authService: AuthService) {}
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.isLoggedIn$ = this.authService.loggedIn$;
+    this.isLoggedIn$ = this.store.select(selectIsLoggedIn);
   }
 }

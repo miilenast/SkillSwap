@@ -16,34 +16,19 @@ export class ReviewService {
 
   constructor(private http: HttpClient) {}
 
-  private getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('Token nije pronađen u localStorage.');
-    }
-    return new HttpHeaders({ 
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}` 
-    });
-  }
-
   getRatingForUser(reviewedUserId: number): Observable<RatingResponse> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<RatingResponse>(`${this.apiUrl}/user/${reviewedUserId}`, { headers });
+    return this.http.get<RatingResponse>(`${this.apiUrl}/user/${reviewedUserId}`);
   }
 
   create(reviewData: { rating: number, reviewedUserId: number }): Observable<Review> {
-    const headers = this.getAuthHeaders();
-    return this.http.post<Review>(this.apiUrl, reviewData, { headers });
+    return this.http.post<Review>(this.apiUrl, reviewData);
   }
 
   update(reviewId: number, updateData: { rating: number }): Observable<Review> {
-    const headers = this.getAuthHeaders();
-    return this.http.patch<Review>(`${this.apiUrl}/${reviewId}`, updateData, { headers });
+    return this.http.patch<Review>(`${this.apiUrl}/${reviewId}`, updateData);
   }
 
   getReviewsReceived(reviewedUserId: number): Observable<Review[]> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<Review[]>(`${this.apiUrl}/received/${reviewedUserId}`, { headers });
+    return this.http.get<Review[]>(`${this.apiUrl}/received/${reviewedUserId}`);
   }
 }

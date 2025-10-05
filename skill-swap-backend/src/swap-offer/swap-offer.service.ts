@@ -18,7 +18,6 @@ export class SwapOfferService {
   ) {}
 
   findAllOffersForRequest(requestId: number): Promise<SwapOffer[]> {
-    console.log('Service method called with requestId:', requestId);
     return this.swapOfferRepository.find({
       where: { request: { id: requestId } },
       relations: ['offerer', 'offeredSkill', 'requestedSkill', 'request'],
@@ -26,7 +25,6 @@ export class SwapOfferService {
   }
 
   async findAllOffersByOffererId(offererId: number): Promise<SwapOffer[]> {
-    console.log(offererId);
     return this.swapOfferRepository.find({
       where: { offerer: { id: offererId } },
       relations: [

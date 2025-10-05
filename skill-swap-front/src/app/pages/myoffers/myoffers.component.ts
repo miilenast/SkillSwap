@@ -47,7 +47,6 @@ export class MyOffersComponent implements OnInit {
     }
     this.offerService.getOffersByOffererId(this.userId).subscribe({
       next: (offers) => {
-        console.log('Fetched offers:', offers);
         this.allOffers = offers;
         this.applySort(this.allOffers);
         this.applyFilter();

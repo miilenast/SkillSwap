@@ -12,39 +12,27 @@ export class SkillRequestService {
   constructor(private http: HttpClient) {}
 
   update(id: number, updateDto: Partial<SkillRequest>): Observable<SkillRequest> {
-    console.log(id, updateDto, localStorage.getItem('token'));
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.patch<SkillRequest>(`${this.apiUrl}/${id}`, updateDto, { headers });
+    return this.http.patch<SkillRequest>(`${this.apiUrl}/${id}`, updateDto);
   }
 
   getAll(): Observable<SkillRequest[]> {
-    let token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('Token nije pronađen u localStorage.');
-    }
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.get<SkillRequest[]>(this.apiUrl, { headers });
+    return this.http.get<SkillRequest[]>(this.apiUrl);
   }
 
   getOne(id: number): Observable<SkillRequest> {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.get<SkillRequest>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.get<SkillRequest>(`${this.apiUrl}/${id}`);
   }
 
   create(request: Partial<SkillRequest>): Observable<SkillRequest> {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.post<SkillRequest>(this.apiUrl, request, { headers });
+    return this.http.post<SkillRequest>(this.apiUrl, request);
   }
 
   delete(id: number): Observable<void> {
-    const headers = new HttpHeaders({ Authorization: `Bearer ${localStorage.getItem('token')}` });
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
   getMyRequests(): Observable<SkillRequest[]> {
-    let token = localStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return this.http.get<SkillRequest[]>(`${this.apiUrl}/my-requests`, { headers });
+    return this.http.get<SkillRequest[]>(`${this.apiUrl}/my-requests`);
   }
 
   getNearbyRequests(): Observable<SkillRequest[]> {

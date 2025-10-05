@@ -16,7 +16,7 @@ export const appConfig = {
       {
         path: 'profile',
         component: ProfileComponent,
-        canActivate: [AuthGuard], // ovo je Angular ekvivalent PrivateRoute
+        canActivate: [AuthGuard], 
       },
     ]),
   ],

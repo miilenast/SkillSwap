@@ -69,7 +69,7 @@ export class SkillOfferService {
     const offers = await this.skillOfferRepository
       .createQueryBuilder('offer')
       .where('offer.userId = :userId', { userId })
-      .select(['offer.title', 'title'])
+      .select(['DISTINCT offer.title', 'title'])
       .getRawMany();
 
     const categories = offers.map((offer) => offer.title as SkillCategory);

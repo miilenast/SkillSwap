@@ -17,16 +17,31 @@
     overflow: hidden;
     background-color: #fff;
 
+    .tableHeader,
+    .tableRow {
+      display: flex;
+      .column {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        text-align: left;
+      }
+    }
+
     .tableHeader {
-      background-color: #f8f9fa;
+      background-color: #f0f0f0;
       font-weight: bold;
-      border-bottom: 1px solid #ccc;
+      text-transform: uppercase;
+      color: #333;
     }
 
     .tableRow {
-      display: flex;
-      padding: 0.75rem 0.5rem;
-      border-bottom: 1px solid #eee; 
+      background-color: #fff;
+      border-bottom: 1px solid #eee;
+      align-items: center;
+
+       &:hover {
+        background-color: #f9f9f9;
+      }
       
       &:last-child {
         border-bottom: none;
@@ -35,8 +50,6 @@
       .column {
         flex: 1;
         padding: 0 0.5rem;
-        display: flex;
-        align-items: center; // Centriranje sadržaja unutar kolone po vertikali
       }
       
       .username-link {
@@ -62,12 +75,12 @@
       }
 
       .contact-btn, .complete-btn {
-        background-color: #28a745; /* Zelena za akciju/kontakt */
+        background-color: #54a0f1; 
         margin-right: 0.5rem;
       }
       
       .contact-btn:hover, .complete-btn:hover {
-        background-color: #218838;
+        background-color: #54a0f1cc;
       }
       
       .rejected-status, .pending-status {

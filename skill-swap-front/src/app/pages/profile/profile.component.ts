@@ -95,8 +95,8 @@ export class ProfileComponent implements OnInit {
     if (!token) return;
 
     const obs = this.showSkillForm === 'add' 
-      ? this.skillService.addSkill(skill, token)
-      : this.skillService.editSkill(skill, token);
+      ? this.skillService.addSkill(skill)
+      : this.skillService.editSkill(skill);
 
     obs.subscribe(data => {
       if (!this.user) return;
@@ -113,7 +113,7 @@ export class ProfileComponent implements OnInit {
     const token = localStorage.getItem('token');
     if (!token || !this.selectedSkill) return;
 
-    this.skillService.deleteSkill(this.selectedSkill.id!, token).subscribe(() => {
+    this.skillService.deleteSkill(this.selectedSkill.id!).subscribe(() => {
       if (!this.user) return;
       this.user.offers = this.user.offers?.filter(o => o.id !== this.selectedSkill!.id);
       this.closeSkillForm();

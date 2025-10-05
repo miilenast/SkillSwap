@@ -1,18 +1,25 @@
-<h2>Oceni korisnika</h2>
-<div class="rating-container">
-    <span class="rating-label">
-        {{ isAlreadyRated ? 'Ažuriraj ocenu:' : 'Oceni korisnika:' }}
-    </span>
-    <div class="stars-wrapper">
-        <mat-icon
-            *ngFor="let star of stars"
-            (click)="rate(star)"
-            class="star-icon"
-            [ngClass]="{'star-filled': star <= starRating, 'star-empty': star > starRating}">
-        star
-        </mat-icon>
+<div class="rating-form-wrapper">
+    <button mat-icon-button mat-dialog-close class="close-button">
+        <mat-icon>close</mat-icon>
+    </button>
+
+    <h2>Oceni korisnika</h2>
+
+    <div class="rating-container">
+        <span class="rating-label">
+            {{ isAlreadyRated ? 'Ažuriraj ocenu:' : 'Oceni korisnika:' }}
+        </span>
+        <div class="stars-wrapper">
+            <mat-icon
+                *ngFor="let star of stars"
+                (click)="rate(star)"
+                class="star-icon"
+                [ngClass]="{'star-filled': star <= starRating, 'star-empty': star > starRating}">
+            star
+            </mat-icon>
+        </div>
     </div>
+    <button mat-raised-button color="primary" (click)="review()">
+        Oceni
+    </button>
 </div>
-<button mat-raised-button color="primary" (click)="review()">
-    Oceni
-</button>
